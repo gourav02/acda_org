@@ -1,0 +1,38 @@
+# Copy this content to your .env.local file
+# Replace the placeholder values with your actual credentials
+
+# ============================================
+# MongoDB Configuration
+# ============================================
+# Get from: https://www.mongodb.com/cloud/atlas
+# Format: mongodb+srv://username:password@cluster.mongodb.net/dbname
+MONGODB_URI=
+
+# ============================================
+# NextAuth Configuration
+# ============================================
+# Generate with: openssl rand -base64 32
+NEXTAUTH_SECRET=
+
+# Your site URL (http://localhost:3000 for development)
+NEXTAUTH_URL=http://localhost:3000
+
+# ============================================
+# Cloudinary Configuration
+# ============================================
+# Get from: https://cloudinary.com/console
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+
+# ============================================
+# Email Configuration (Resend)
+# ============================================
+# Get from: https://resend.com/api-keys
+RESEND_API_KEY=
+ADMIN_EMAIL=gouravsuvo@gmail.com
+
+# ============================================
+# Site Configuration
+# ============================================
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
