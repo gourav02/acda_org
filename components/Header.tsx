@@ -61,8 +61,12 @@ export default function Header() {
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8">
         {/* Logo */}
         <div className="flex lg:flex-1">
-          <Link href="/" className="flex items-center space-x-2">
-            <Activity className="h-8 w-8 text-white" />
+          <Link href="/" className="flex items-center space-x-4">
+             <img
+              src={'/logos/logo.jpg'}
+              className="h-full w-full md:h-[60px] md:w-[64px]"
+              alt={'acda_logo'}
+            />
             <span className="text-xl font-bold text-white">
               Asansol Coalfield Diabetes Association
             </span>
