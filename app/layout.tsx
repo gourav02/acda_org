@@ -39,7 +39,7 @@ export default function RootLayout({
               priority="info"
             />
             <Header />
-            {/* <link rel="icon" href="/logos/logo.jpg" /> */}
+            <link rel="icon" href="/logos/logo.jpg" />
             <main className="flex-1">{children}</main>
             <Footer />
           </div>
