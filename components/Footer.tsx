@@ -6,42 +6,44 @@ export default function Footer() {
 
   const footerLinks = {
     company: [
-      { name: "About Us", href: "/about" },
-      { name: "Services", href: "/services" },
-      { name: "Careers", href: "/careers" },
-      { name: "Contact", href: "/contact" },
+      { name: "ACDACON", href: "/acdacon" },
+      { name: "Events", href: "/events" },
+      { name: "About", href: "/about" },
+      { name: "Membership", href: "/membership" },
     ],
-    resources: [
-      { name: "Blog", href: "/blog" },
-      { name: "FAQs", href: "/faq" },
-      { name: "Support", href: "/support" },
-      { name: "Privacy Policy", href: "/privacy" },
-    ],
+    // resources: [
+    //   { name: "Blog", href: "/blog" },
+    //   { name: "FAQs", href: "/faq" },
+    //   { name: "Support", href: "/support" },
+    //   { name: "Privacy Policy", href: "/privacy" },
+    // ],
     contact: [
       { icon: Phone, text: "+1 (555) 123-4567" },
-      { icon: Mail, text: "info@healthcare.com" },
-      { icon: MapPin, text: "123 Medical Center, NY 10001" },
+      { icon: Mail, text: "info@acda.org.in" },
+      {
+        icon: MapPin,
+        text: "Ground Floor, 01, Amar Saria Enclave, Hutton Road, M.N Saha Road, Dr. M.N Saha Road, Near Masjid, Hutton Road, Asansol, Paschim Bardhaman, West Bengal, 713301",
+      },
     ],
   };
 
   return (
     <footer className="bg-primary text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {/* Brand Section */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center space-x-2">
               <Activity className="h-8 w-8 text-accent" />
               <span className="text-xl font-bold">Asansol Coalfield Diabetes Association</span>
             </Link>
-            <p className="text-sm text-gray-300">
+            {/* <p className="text-sm text-gray-300">
               Committed to Diabetes Care & Awareness in the Asansol Coalfield region.
-            </p>
+            </p> */}
           </div>
 
           {/* Company Links */}
           <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Company</h3>
             <ul className="space-y-2">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
@@ -57,7 +59,7 @@ export default function Footer() {
           </div>
 
           {/* Resources Links */}
-          <div>
+          {/* <div>
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Resources</h3>
             <ul className="space-y-2">
               {footerLinks.resources.map((link) => (
@@ -71,7 +73,7 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
 
           {/* Contact Info */}
           <div>

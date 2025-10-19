@@ -104,14 +104,12 @@ function generateEmailTemplate(data: ContactFormData): string {
           background-color: #f5f5f5;
         }
         .container {
-          background-color: #ffffff;
           border-radius: 8px;
           padding: 30px;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .header {
-          background: linear-gradient(135deg, #111184 0%, #1a1a9e 100%);
-          color: #ffffff;
+          color: #333;
           padding: 20px;
           border-radius: 8px 8px 0 0;
           margin: -30px -30px 30px -30px;
@@ -172,7 +170,7 @@ function generateEmailTemplate(data: ContactFormData): string {
     <body>
       <div class="container">
         <div class="header">
-          <h1>🏥 New Membership Application</h1>
+          <h1>New Membership Application</h1>
           <p style="margin: 5px 0 0 0; opacity: 0.9;">Asansol Coalfield Diabetes Association</p>
         </div>
 
@@ -289,7 +287,7 @@ export async function POST(request: NextRequest) {
     // Send email using Resend
     const emailResult = await resend.emails.send({
       // from: "ACDA Membership <noreply@acdacon.org>",
-      from: "gouravsuvo@gmail.com",
+      from: "noreply@acda.org.in",
       to: env.email.adminEmail,
       replyTo: data.email,
       subject: `New Contact Form Submission - ACDA: ${data.subject}`,

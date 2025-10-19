@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Calendar, MapPin, Clock, ChevronRight, Loader2, X } from "lucide-react";
+import { Calendar, MapPin, Clock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -93,7 +93,7 @@ export default function EventsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-primary to-primary-700 py-20">
+      <section className="relative overflow-hidden bg-gradient-to-r from-primary to-primary-200 py-20">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -103,11 +103,11 @@ export default function EventsPage() {
               </div>
             </div>
             <h1 className="mb-4 text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
-              Our Events
+              Events and Activities
             </h1>
             <p className="mx-auto max-w-2xl text-xl text-primary-100">
-              Join us in our mission to raise awareness and promote diabetes care through community
-              events
+              ACDA conducts a wide range of community and academic activities throughout the year to
+              fulfill its mission of education and prevention
             </p>
           </div>
         </div>
@@ -332,33 +332,6 @@ export default function EventsPage() {
           )}
         </DialogContent>
       </Dialog>
-
-      {/* Call to Action */}
-      <section className="bg-gradient-to-r from-primary to-primary-700 py-16">
-        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl">
-            Stay Updated on Our Events
-          </h2>
-          <p className="mb-8 text-xl text-primary-100">
-            Join our community and never miss an event
-          </p>
-          <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <a
-              href="/membership"
-              className="inline-flex items-center justify-center rounded-lg bg-accent px-8 py-3 text-lg font-semibold text-primary transition-colors hover:bg-accent/90"
-            >
-              Become a Member
-              <ChevronRight className="ml-2 h-5 w-5" />
-            </a>
-            <a
-              href="/acdacon"
-              className="inline-flex items-center justify-center rounded-lg border-2 border-white bg-transparent px-8 py-3 text-lg font-semibold text-white transition-colors hover:bg-white/10"
-            >
-              View ACDACON Gallery
-            </a>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

@@ -16,7 +16,7 @@ import {
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
 
   // Prevent hydration mismatch by only rendering session-dependent UI after mount
@@ -173,7 +173,7 @@ export default function Header() {
                   <Link href="/admin/dashboard" className="block">
                     <Button
                       variant="outline"
-                      className="w-full border-white text-white hover:bg-primary-700"
+                      className="w-full border-white text-primary hover:bg-primary-700"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       <LayoutDashboard className="mr-2 h-4 w-4" />

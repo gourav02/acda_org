@@ -38,8 +38,10 @@ const membershipFormSchema = z.object({
     .max(200, { message: "Subject must not exceed 200 characters" }),
   message: z
     .string()
-    .min(10, { message: "Message must be at least 10 characters" })
-    .max(1000, { message: "Message must not exceed 1000 characters" }),
+    .optional()
+    .refine((value) => value === undefined || value.length <= 1000, {
+      message: "Message must not exceed 1000 characters",
+    }),
   // Honeypot field - should always be empty
   website: z.string().max(0).optional(),
 });
@@ -445,7 +447,7 @@ export default function MembershipForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base font-semibold text-primary-800">
-                      Message
+                      Message <span className="text-gray-400">(Optional)</span>
                     </FormLabel>
                     <FormControl>
                       <Textarea
@@ -482,19 +484,6 @@ export default function MembershipForm() {
               </div>
             </form>
           </Form>
-        </div>
-
-        {/* Contact Info */}
-        <div className="mt-12 text-center">
-          <p className="text-gray-600">
-            Have questions?{" "}
-            <a
-              href="mailto:gouravsuvo@gmail.com"
-              className="font-semibold text-primary transition-colors hover:opacity-70"
-            >
-              Contact us directly
-            </a>
-          </p>
         </div>
       </div>
     </section>

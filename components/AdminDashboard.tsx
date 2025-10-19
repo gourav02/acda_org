@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import { signOut } from "next-auth/react";
-import { LogOut, User, Image, Calendar } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Session } from "next-auth";
 import PhotoUploadForm from "@/components/PhotoUploadForm";
 import EventForm from "@/components/EventForm";
-import EventList from "@/components/EventList";
 
 interface AdminDashboardProps {
   session: Session;
@@ -80,7 +79,7 @@ export default function AdminDashboard({ session }: AdminDashboardProps) {
         {activeTab === "photos" ? (
           <>
             {/* Upload Form */}
-            <div className="mb-8">
+            <div className="my-24">
               <PhotoUploadForm />
             </div>
           </>
@@ -92,60 +91,11 @@ export default function AdminDashboard({ session }: AdminDashboardProps) {
             </div>
 
             {/* Event List */}
-            <div className="mb-8">
+            {/* <div className="mb-8">
               <EventList />
-            </div>
+            </div> */}
           </>
         )}
-
-        {/* Quick Actions Grid */}
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {/* Upload Photos Card */}
-          <div className="group cursor-pointer rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 transition-colors group-hover:bg-primary-200">
-              <Image className="h-6 w-6 text-primary-600" aria-label="Upload icon" />
-            </div>
-            <h3 className="mb-2 text-lg font-semibold text-primary-800">Upload Photos</h3>
-            <p className="text-sm text-gray-600">Add new event photos to the gallery</p>
-          </div>
-
-          {/* Manage Events Card */}
-          <div className="group cursor-pointer rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 transition-colors group-hover:bg-primary-200">
-              <Calendar className="h-6 w-6 text-primary-600" aria-hidden="true" />
-            </div>
-            <h3 className="mb-2 text-lg font-semibold text-primary-800">Manage Events</h3>
-            <p className="text-sm text-gray-600">Create and edit event information</p>
-          </div>
-
-          {/* View Gallery Card */}
-          <div className="group cursor-pointer rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 transition-colors group-hover:bg-primary-200">
-              <Image className="h-6 w-6 text-primary-600" aria-label="Gallery icon" />
-            </div>
-            <h3 className="mb-2 text-lg font-semibold text-primary-800">View Gallery</h3>
-            <p className="text-sm text-gray-600">Browse and manage uploaded photos</p>
-          </div>
-        </div>
-
-        {/* Stats Section (Placeholder) */}
-        <div className="mt-8 rounded-2xl bg-white p-6 shadow-lg">
-          <h3 className="mb-4 text-xl font-bold text-primary-800">Quick Stats</h3>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-lg border border-gray-200 p-4">
-              <p className="text-sm text-gray-600">Total Photos</p>
-              <p className="text-2xl font-bold text-primary-800">0</p>
-            </div>
-            <div className="rounded-lg border border-gray-200 p-4">
-              <p className="text-sm text-gray-600">Total Events</p>
-              <p className="text-2xl font-bold text-primary-800">0</p>
-            </div>
-            <div className="rounded-lg border border-gray-200 p-4">
-              <p className="text-sm text-gray-600">Recent Uploads</p>
-              <p className="text-2xl font-bold text-primary-800">0</p>
-            </div>
-          </div>
-        </div>
       </main>
     </div>
   );

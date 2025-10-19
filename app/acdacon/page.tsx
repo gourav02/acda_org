@@ -1,9 +1,9 @@
 import EventGallery from "@/components/EventGallery";
 
 export const metadata = {
-  title: "ACDACON Event Gallery - Asansol Coalfield Diabetes Association",
+  title: "ACDACon – Annual Conference",
   description:
-    "Browse photos from our community health camps, awareness programs, and diabetes care initiatives.",
+    "The ACDACon Annual Conference is the flagship event of the Association, bringing together eminent diabetologists, endocrinologists, nutrition experts, and healthcare professionals from across the world. Each year, ACDACon serves as a scientific forum to exchange the latest advances in diabetes research, clinical practices, and technological innovations. The conference features keynote lectures, paper presentations, workshops, and interactive sessions designed to foster learning and collaboration",
 };
 
 export default function ACDACONPage() {
