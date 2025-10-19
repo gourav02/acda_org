@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Menu, X, ChevronDown, LogOut, LayoutDashboard } from "lucide-react";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -62,9 +63,12 @@ export default function Header() {
         {/* Logo */}
         <div className="flex lg:flex-1">
           <Link href="/" className="flex items-center space-x-4">
-            <img
+            <Image
               src={"/logos/logo.jpg"}
               className="h-full w-full md:h-[60px] md:w-[64px]"
+              width={10}
+              height={10}
+              unoptimized
               alt={"acda_logo"}
             />
             <span className="text-xl font-bold text-white">
