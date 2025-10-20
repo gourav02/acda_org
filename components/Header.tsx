@@ -66,9 +66,6 @@ export default function Header() {
             <Image
               src={"/logos/logo.jpg"}
               className="h-full w-full md:h-[60px] md:w-[64px]"
-              width={10}
-              height={10}
-              unoptimized
               alt={"acda_logo"}
             />
             <span className="text-xl font-bold text-white">

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Activity, Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -34,7 +35,11 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center space-x-2">
-              <Activity className="h-8 w-8 text-accent" />
+              <Image
+                src={"/logos/logo.jpg"}
+                className="h-full w-full md:h-[50px] md:w-[54px]"
+                alt={"acda_logo"}
+              />
               <span className="text-xl font-bold">Asansol Coalfield Diabetes Association</span>
             </Link>
             {/* <p className="text-sm text-gray-300">

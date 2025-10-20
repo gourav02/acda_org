@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import EventPhoto from "@/models/EventPhoto";
 
+// Force dynamic rendering
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     // Get year from query params
