@@ -19,9 +19,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "ACDA",
-  description:
-    "Together, we envision a healthier tomorrow — where awareness, prevention, and early intervention shape the future of diabetes care.",
+  title: "HealthCare - Quality Medical Services",
+  description: "Providing quality healthcare services with compassion and excellence",
 };
 
 export default function RootLayout({
@@ -39,7 +38,7 @@ export default function RootLayout({
               priority="info"
             />
             <Header />
-            <link rel="icon" href="/logos/logo.jpg" />
+            {/* <link rel="icon" href="/logos/logo.jpg" /> */}
             <main className="flex-1">{children}</main>
             <Footer />
           </div>
