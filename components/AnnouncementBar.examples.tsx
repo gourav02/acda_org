@@ -11,7 +11,7 @@ import AnnouncementBar from "@/components/AnnouncementBar";
 export function Example1() {
   return (
     <AnnouncementBar
-      message="🏥 Next Health Camp: October 25th, 2025 - Free Diabetes Screening Available"
+      message="Annual ACDA conference on 25th and 26th October 2025."
       priority="info"
     />
   );

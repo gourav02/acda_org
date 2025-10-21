@@ -10,6 +10,7 @@ import {
   Calendar as CalendarIcon,
   MapPin,
   Image as ImageIcon,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,39 +22,58 @@ export default function EventForm() {
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [location, setLocation] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle");
   const [uploadMessage, setUploadMessage] = useState("");
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
+    const files = Array.from(e.target.files || []);
+
+    if (files.length === 0) return;
+
+    // Validate files
+    const validFiles: File[] = [];
+    const newPreviewUrls: string[] = [];
+
+    for (const file of files) {
       // Validate file type
       if (!file.type.startsWith("image/")) {
-        setUploadMessage("Please select an image file");
+        setUploadMessage("All files must be images");
         setUploadStatus("error");
-        return;
+        continue;
       }
 
       // Validate file size (10MB)
       if (file.size > 10 * 1024 * 1024) {
-        setUploadMessage("File size must be less than 10MB");
+        setUploadMessage("Each file must be less than 10MB");
         setUploadStatus("error");
-        return;
+        continue;
       }
 
-      setSelectedFile(file);
-      setUploadStatus("idle");
+      validFiles.push(file);
 
       // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
+        newPreviewUrls.push(reader.result as string);
+        if (newPreviewUrls.length === validFiles.length) {
+          setPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
+        }
       };
       reader.readAsDataURL(file);
     }
+
+    if (validFiles.length > 0) {
+      setSelectedFiles((prev) => [...prev, ...validFiles]);
+      setUploadStatus("idle");
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+    setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
   };
 
   const uploadToCloudinary = async (file: File): Promise<{ url: string; publicId: string }> => {
@@ -102,14 +122,16 @@ export default function EventForm() {
         return;
       }
 
-      let imageUrl = "";
-      let publicId = "";
+      const imageUrls: string[] = [];
+      const publicIds: string[] = [];
 
-      // Upload image if selected
-      if (selectedFile) {
-        const cloudinaryData = await uploadToCloudinary(selectedFile);
-        imageUrl = cloudinaryData.url;
-        publicId = cloudinaryData.publicId;
+      // Upload all images if selected
+      if (selectedFiles.length > 0) {
+        for (const file of selectedFiles) {
+          const cloudinaryData = await uploadToCloudinary(file);
+          imageUrls.push(cloudinaryData.url);
+          publicIds.push(cloudinaryData.publicId);
+        }
       }
 
       // Create event
@@ -123,8 +145,8 @@ export default function EventForm() {
           description,
           date,
           location,
-          imageUrl,
-          publicId,
+          imageUrls,
+          publicIds,
         }),
       });
 
@@ -143,8 +165,8 @@ export default function EventForm() {
         setDescription("");
         setDate("");
         setLocation("");
-        setSelectedFile(null);
-        setPreviewUrl(null);
+        setSelectedFiles([]);
+        setPreviewUrls([]);
         setUploadStatus("idle");
         setUploadMessage("");
       }, 2000);
@@ -243,12 +265,44 @@ export default function EventForm() {
 
         {/* Image Upload */}
         <div>
-          <Label className="text-base font-semibold text-gray-700">Event Image (Optional)</Label>
-          <p className="mb-3 text-sm text-gray-500">Upload an image to showcase the event</p>
+          <Label className="text-base font-semibold text-gray-700">Event Images (Optional)</Label>
+          <p className="mb-3 text-sm text-gray-500">Upload multiple images to showcase the event</p>
+
+          {/* Image Previews */}
+          {previewUrls.length > 0 && (
+            <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+              {previewUrls.map((url, index) => (
+                <div key={index} className="relative">
+                  <Image
+                    src={url}
+                    alt={`Preview ${index + 1}`}
+                    width={200}
+                    height={150}
+                    className="h-32 w-full rounded-lg object-cover"
+                    unoptimized
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white shadow-lg hover:bg-red-600"
+                    disabled={isUploading}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                  <div className="mt-1 truncate text-xs text-gray-600">
+                    {selectedFiles[index]?.name}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Upload Area */}
           <input
             type="file"
             id="file-input"
             accept="image/*"
+            multiple
             onChange={handleFileChange}
             className="hidden"
             disabled={isUploading}
@@ -259,24 +313,13 @@ export default function EventForm() {
               isUploading ? "cursor-not-allowed opacity-50" : ""
             }`}
           >
-            {previewUrl ? (
-              <div className="relative">
-                <Image
-                  src={previewUrl}
-                  alt="Preview of selected image"
-                  width={300}
-                  height={200}
-                  className="max-h-48 rounded-lg object-contain"
-                  unoptimized
-                />
-                <div className="mt-2 text-center text-sm text-gray-600">{selectedFile?.name}</div>
-              </div>
-            ) : (
-              <>
-                <ImageIcon className="mb-2 h-12 w-12 text-gray-400" />
-                <p className="text-sm font-medium text-gray-700">Click to upload image</p>
-                <p className="mt-1 text-xs text-gray-500">PNG, JPG, WEBP up to 10MB</p>
-              </>
+            <ImageIcon className="mb-2 h-12 w-12 text-gray-400" />
+            <p className="text-sm font-medium text-gray-700">Click to upload images</p>
+            <p className="mt-1 text-xs text-gray-500">PNG, JPG, WEBP up to 10MB each</p>
+            {previewUrls.length > 0 && (
+              <p className="mt-2 text-xs font-medium text-primary-600">
+                {previewUrls.length} image{previewUrls.length > 1 ? "s" : ""} selected
+              </p>
             )}
           </label>
         </div>

@@ -226,7 +226,14 @@ export default function EventsPage() {
                         {event.location && (
                           <div className="flex items-center gap-2 text-sm text-gray-500">
                             <MapPin className="h-4 w-4 flex-shrink-0 text-primary" />
-                            <span className="line-clamp-1">{event.location}</span>
+                            <a
+                              href={event.location}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="line-clamp-1 text-primary hover:underline"
+                            >
+                              {event.location}
+                            </a>
                           </div>
                         )}
                       </div>
@@ -305,7 +312,15 @@ export default function EventsPage() {
                 {selectedEvent?.location && (
                   <span className="flex items-center gap-2">
                     <MapPin className="h-4 w-4" />
-                    {selectedEvent.location}
+
+                    <a
+                      href={selectedEvent.location}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="line-clamp-1 text-primary hover:underline"
+                    >
+                      {selectedEvent.location}
+                    </a>
                   </span>
                 )}
               </div>

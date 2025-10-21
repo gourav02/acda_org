@@ -37,7 +37,7 @@ export default function AboutPage() {
                 </div>
               </div>
               <div className="flex-1">
-                <h2 className="mb-4 text-3xl font-bold text-primary-800">Who We Are</h2>
+                <h2 className="mb-4 text-3xl font-bold text-primary-800">Our History</h2>
                 <p className="mb-4 text-lg leading-relaxed text-gray-700">
                   Founded in 2019, with the vision of creating a diabetes-aware society, the{" "}
                   <strong>Asansol Coalfield Diabetes Association (ACDA)</strong> is dedicated to
@@ -47,28 +47,36 @@ export default function AboutPage() {
                   <p className="mb-3 text-lg font-medium text-gray-800">
                     Our core objectives include:
                   </p>
-                  <ul className="space-y-2 text-gray-700">
-                    <li className="flex items-start">
-                      <span className="mr-3 mt-1 flex h-2 w-2 flex-shrink-0 rounded-full bg-blue-600"></span>
-                      <span className="text-base leading-relaxed">
+                  <ul className="space-y-3 text-gray-700">
+                    <li className="flex gap-3">
+                      <span className="flex-shrink-0 pt-2">
+                        <span className="block h-2 w-2 rounded-full bg-primary"></span>
+                      </span>
+                      <span className="flex-1 text-base leading-relaxed">
                         Organizing the annual scientific International Conference - ACDACON
                       </span>
                     </li>
-                    <li className="flex items-start">
-                      <span className="mr-3 mt-1 flex h-2 w-2 flex-shrink-0 rounded-full bg-blue-600"></span>
-                      <span className="text-base leading-relaxed">
+                    <li className="flex gap-3">
+                      <span className="flex-shrink-0 pt-2">
+                        <span className="block h-2 w-2 rounded-full bg-primary"></span>
+                      </span>
+                      <span className="flex-1 text-base leading-relaxed">
                         Conducting educational workshops and awareness programs
                       </span>
                     </li>
-                    <li className="flex items-start">
-                      <span className="mr-3 mt-1 flex h-2 w-2 flex-shrink-0 rounded-full bg-blue-600"></span>
-                      <span className="text-base leading-relaxed">
+                    <li className="flex gap-3">
+                      <span className="flex-shrink-0 pt-2">
+                        <span className="block h-2 w-2 rounded-full bg-primary"></span>
+                      </span>
+                      <span className="flex-1 text-base leading-relaxed">
                         Promoting research and clinical excellence in diabetes management
                       </span>
                     </li>
-                    <li className="flex items-start">
-                      <span className="mr-3 mt-1 flex h-2 w-2 flex-shrink-0 rounded-full bg-blue-600"></span>
-                      <span className="text-base leading-relaxed">
+                    <li className="flex gap-3">
+                      <span className="flex-shrink-0 pt-2">
+                        <span className="block h-2 w-2 rounded-full bg-primary"></span>
+                      </span>
+                      <span className="flex-1 text-base leading-relaxed">
                         Supporting healthcare professionals through academic collaboration
                       </span>
                     </li>
@@ -99,14 +107,29 @@ export default function AboutPage() {
                 </div>
                 <h2 className="text-3xl font-bold">Our Mission</h2>
               </div>
-              <p className="text-lg leading-relaxed text-primary-50">
-                The Asansol Coalfield Diabetes Association (ACDA) strives to: 1. Promote awareness
-                and early detection of diabetes through education and outreach. 2. Strengthen
-                professional collaboration among doctors and healthcare providers. 3. Encourage
-                research and evidence-based practices in diabetes care. 4. Inspire ethical,
-                patient-centered, and community-driven healthcare initiatives. Our mission is to
-                unite science, service, and compassion for a diabetes-free tomorrow
+              <p className="mb-3 text-lg leading-relaxed text-primary-50">
+                <strong>The Asansol Coalfield Diabetes Association (ACDA) strives to:</strong>
               </p>
+              <ol className="flex list-decimal flex-col gap-2 pl-5 text-primary-50">
+                <li>
+                  Promote awareness and early detection of diabetes through education and outreach.
+                </li>
+                <li>
+                  Strengthen professional collaboration among doctors and healthcare providers.
+                </li>
+                <li>Encourage research and evidence-based practices in diabetes care.</li>
+                <li>
+                  Inspire ethical, patient-centered, and community-driven healthcare initiatives.
+                </li>
+              </ol>
+              <div className="mt-3 flex items-center justify-center text-lg italic leading-relaxed text-primary-50">
+                <span className="mr-2 text-3xl">“</span>
+                <p className="max-w-3xl text-center">
+                  --- Our mission is to unite science, service, and compassion for a diabetes-free
+                  tomorrow.
+                </p>
+                <span className="ml-2 text-3xl">”</span>
+              </div>
             </div>
 
             {/* Vision Card */}
@@ -117,15 +140,49 @@ export default function AboutPage() {
                 </div>
                 <h2 className="text-3xl font-bold">Our Vision</h2>
               </div>
-              <p className="text-lg leading-relaxed text-primary-800">
-                To build a healthier society where every individual — regardless of background or
-                access — is empowered with the knowledge, care, and support needed to prevent and
-                manage diabetes effectively. We envision ACDA as a leading regional platform for
-                doctors, dietitians, and healthcare professionals to collaborate, share knowledge,
-                and bring innovation to diabetes care in the Asansol and surrounding coalfield
-                areas. A future where awareness replaces ignorance, prevention replaces fear, and
-                compassionate care leads to healthier communities.
-              </p>
+
+              <div className="space-y-6">
+                <p className="text-lg leading-relaxed text-primary-800">
+                  To build a healthier society where every individual has access to comprehensive
+                  diabetes care and education.
+                </p>
+
+                <div className="space-y-4">
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0 pt-2">
+                      <div className="h-2 w-2 rounded-full bg-primary"></div>
+                    </div>
+                    <p className="flex-1 text-base leading-relaxed text-primary-800">
+                      <span className="font-semibold">Empowerment Through Knowledge:</span> Ensuring
+                      every individual, regardless of background or access, is equipped with the
+                      knowledge and support needed to prevent and manage diabetes effectively
+                    </p>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0 pt-2">
+                      <div className="h-2 w-2 rounded-full bg-primary"></div>
+                    </div>
+                    <p className="flex-1 text-base leading-relaxed text-primary-800">
+                      <span className="font-semibold">Regional Leadership:</span> Establishing ACDA
+                      as the leading platform for doctors, dietitians, and healthcare professionals
+                      to collaborate and innovate in diabetes care across Asansol and the coalfield
+                      areas
+                    </p>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0 pt-2">
+                      <div className="h-2 w-2 rounded-full bg-primary"></div>
+                    </div>
+                    <p className="flex-1 text-base leading-relaxed text-primary-800">
+                      <span className="font-semibold">Community Transformation:</span> Creating a
+                      future where awareness replaces ignorance, prevention replaces fear, and
+                      compassionate care leads to healthier, thriving communities
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -151,9 +208,7 @@ export default function AboutPage() {
 
           {/* Executive Committee 2024-2025 */}
           <div className="mb-12">
-            <h3 className="mb-6 text-2xl font-bold text-primary-700">
-              Executive Committee (2024–2025)
-            </h3>
+            <h3 className="mb-6 text-2xl font-bold text-primary-700">Executive Committee</h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {/* President */}
               <div className="rounded-lg border-l-4 border-primary bg-primary-50 p-4 shadow-sm">
@@ -212,7 +267,7 @@ export default function AboutPage() {
               </div>
 
               {/* Office Secretary */}
-              <div className="rounded-lg border-l-4 border-accent bg-accent/10 p-4 shadow-sm">
+              <div className="rounded-lg border-l-4 border-primary bg-primary-50 p-4 shadow-sm">
                 <p className="mb-1 text-sm font-semibold uppercase tracking-wide text-primary-600">
                   Office Secretary
                 </p>
@@ -223,7 +278,7 @@ export default function AboutPage() {
 
           {/* Executive Members */}
           <div className="mb-12">
-            <h3 className="mb-4 text-2xl font-bold text-primary-700">Executive Members</h3>
+            <h3 className="mb-4 text-2xl font-bold text-primary-700">Our Executive Members</h3>
             <p className="mb-6 text-base text-gray-600">
               The Executive Members actively contribute to academic initiatives, policy development,
               and event organization.
@@ -261,7 +316,7 @@ export default function AboutPage() {
 
           {/* Members */}
           <div className="mb-10">
-            <h3 className="mb-4 text-2xl font-bold text-primary-700">Members</h3>
+            <h3 className="mb-4 text-2xl font-bold text-primary-700">ACDA Members</h3>
             <p className="mb-6 text-base leading-relaxed text-gray-700">
               The ACDA is strengthened by a growing body of physicians, diabetologists, dietitians,
               educators, and allied health professionals who work tirelessly toward a shared goal —

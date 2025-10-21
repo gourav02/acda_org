@@ -1,5 +1,6 @@
 import { Quote } from "lucide-react";
 import { DirectorMessage } from "@/types";
+import Image from "next/image";
 
 const directors: DirectorMessage[] = [
   {
@@ -7,7 +8,7 @@ const directors: DirectorMessage[] = [
     position: "President, Asansol Coalfield Diabetes Association",
     message:
       "It gives me immense pleasure to welcome you to the official website of the Asansol Coalfield Diabetes Association (ACDA). Over the years, ACDA has evolved into a platform that unites clinicians, researchers, dietitians, and public health advocates toward one shared goal — to improve the lives of individuals affected by diabetes. Our mission is to unite science, service, and compassion for a diabetes-free tomorrow. The collective strength of our members and the trust of the community continue to inspire our work. As we move forward, we remain steadfast in our commitment to research, education, and service. I invite you to join hands with us in creating greater awareness and promoting a culture of health and wellness across our region.",
-    image: "",
+    image: "/images/dr_subrata.JPG",
   },
 ];
 
@@ -24,15 +25,12 @@ export default function DirectorMessages() {
         />
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="mb-12 text-center lg:mb-16">
           <h2 className="mb-4 text-3xl font-bold text-primary-800 sm:text-4xl lg:text-5xl">
             Message from the President, ACDA
           </h2>
-          {/* <p className="mx-auto max-w-2xl text-lg text-gray-600">
-            Leadership committed to excellence in diabetes care and community wellness
-          </p> */}
         </div>
 
         {/* Directors Row - Horizontal Layout */}
@@ -48,7 +46,7 @@ export default function DirectorMessages() {
               </div>
 
               {/* Director Photo */}
-              {/* <div className="relative z-10 mb-6 flex justify-center md:mb-0 md:flex-shrink-0">
+              <div className="relative z-10 mb-6 flex justify-center md:mb-0 md:flex-shrink-0">
                 <div className="relative h-32 w-32 overflow-hidden rounded-full border-4 border-primary-100 shadow-lg transition-transform duration-300 group-hover:scale-105 md:h-40 md:w-40">
                   <Image
                     src={director.image}
@@ -58,7 +56,7 @@ export default function DirectorMessages() {
                     sizes="(max-width: 768px) 128px, 160px"
                   />
                 </div>
-              </div> */}
+              </div>
 
               {/* Director Content */}
               <div className="relative z-10 flex flex-1 flex-col">

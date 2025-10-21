@@ -54,6 +54,7 @@ export default function Header() {
     { name: "ACDACON", href: "/acdacon" },
     { name: "Events", href: "/events" },
     { name: "About", href: "/about" },
+    { name: "Publication", href: "/publication" },
     { name: "Membership", href: "/membership" },
   ];
 
@@ -66,6 +67,8 @@ export default function Header() {
             <Image
               src={"/logos/logo.jpg"}
               className="h-full w-full md:h-[60px] md:w-[64px]"
+              width={30}
+              height={30}
               alt={"acda_logo"}
             />
             <span className="text-xl font-bold text-white">

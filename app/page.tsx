@@ -20,7 +20,6 @@ export default function Home() {
 
       <AcdaconSection />
 
-      {/* CTA Section */}
       <ContactUs />
     </div>
   );

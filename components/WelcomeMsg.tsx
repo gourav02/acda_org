@@ -1,6 +1,8 @@
+import Image from "next/image";
+
 export default function WelcomeMsg() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-16 lg:py-24">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-[0.03]">
         <div
@@ -11,59 +13,75 @@ export default function WelcomeMsg() {
         />
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
-        {/* Main Content */}
-        <div className="text-center">
-          {/* Heading */}
-          <div className="mb-8">
-            <h1 className="mb-4 text-4xl font-bold tracking-tight text-blue-900 sm:text-5xl lg:text-6xl">
-              Welcome to{" "}
-              <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Asansol Coalfield Diabetes Association
-              </span>
-            </h1>
-            <p className="text-xl font-medium text-blue-700 sm:text-2xl">(ACDA)</p>
+      <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Heading - Centered */}
+        <div className="mb-12 text-center lg:mb-16">
+          <h1 className="mb-4 text-4xl font-bold tracking-tight text-blue-900 sm:text-5xl lg:text-6xl">
+            Welcome to{" "}
+            <span className="block text-blue-900">Asansol Coalfield Diabetes Association</span>
+          </h1>
+          <p className="text-xl font-medium text-blue-900 sm:text-2xl">(ACDA)</p>
+        </div>
+
+        {/* Image and Description Section */}
+        <div className="mb-12 flex flex-col items-center gap-8 lg:mb-16 lg:flex-row lg:items-start lg:gap-12">
+          {/* Left: Image */}
+          <div className="w-full flex-shrink-0 lg:w-1/2">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-xl">
+              <Image
+                src="/images/welcome.jpeg"
+                alt="ACDA - Asansol Coalfield Diabetes Association"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                priority
+              />
+            </div>
           </div>
 
-          {/* Introduction */}
-          <div className="mx-auto max-w-4xl space-y-6 text-lg leading-relaxed text-gray-700">
-            <p className="text-xl font-medium text-gray-800">
+          {/* Right: Description Text */}
+          <div className="w-full space-y-5 text-left lg:w-1/2">
+            <p className="text-lg font-semibold leading-relaxed text-gray-800">
               The Asansol Coalfield Diabetes Association (ACDA) is a premier medical organization
               dedicated to advancing diabetes care, education, and awareness in the Asansol and
               coalfield regions of India.
             </p>
 
-            <p>
+            <p className="text-base leading-relaxed text-gray-700">
               Since its inception, ACDA has been committed to empowering communities through
               scientific engagement, preventive health programs, and evidence-based education.
             </p>
 
-            <p>
+            <p className="text-base leading-relaxed text-gray-700">
               Through collaborative efforts with healthcare professionals, researchers, and public
               health agencies, we strive to reduce the burden of diabetes and its complications.
               ACDA organizes regular screening camps, public awareness initiatives, and the annual
               ACDA Conference, which brings together leading experts in the field of diabetology and
               metabolic health from all over the world.
             </p>
-
-            <p className="pt-4 text-xl font-semibold text-blue-800">
-              Together, we envision a healthier tomorrow — where awareness, prevention, and early
-              intervention shape the future of diabetes care.
-            </p>
           </div>
         </div>
 
-        {/* Optional: Call to Action */}
-        <div className="mt-12 text-center lg:mt-16">
-          <p className="text-lg text-gray-600">
-            Want to learn more about our team?{" "}
-            <a
-              href="/about"
-              className="font-semibold text-primary transition-colors hover:text-primary/60"
-            >
-              Visit our About page →
-            </a>
-          </p>
+        {/* Quote Section - Centered */}
+        <div className="mb-12 lg:mb-16">
+          <div className="mx-auto max-w-4xl">
+            <blockquote className="border-l-4 border-blue-600 bg-blue-50 py-6 pl-8 pr-6">
+              <p className="text-xl italic leading-relaxed text-blue-900 sm:text-2xl">
+                Together, we envision a healthier tomorrow — where awareness, prevention, and early
+                intervention shape the future of diabetes care.
+              </p>
+            </blockquote>
+          </div>
+        </div>
+
+        {/* Call to Action Button - Centered */}
+        <div className="text-center">
+          <a
+            href="/about"
+            className="inline-flex items-center justify-center rounded-lg bg-primary px-8 py-3 text-lg font-semibold text-white transition-colors hover:bg-primary/90"
+          >
+            Learn More About Our Team →
+          </a>
         </div>
       </div>
     </section>

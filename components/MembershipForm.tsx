@@ -466,7 +466,7 @@ export default function MembershipForm() {
                 <Button
                   type="submit"
                   size="lg"
-                  disabled={isSubmitting}
+                  disabled={true}
                   className="w-full bg-primary text-white hover:bg-primary/90 disabled:opacity-50"
                 >
                   {isSubmitting ? (

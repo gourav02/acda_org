@@ -35,7 +35,7 @@ export default function RootLayout({
         <SessionProvider>
           <div className="flex min-h-screen flex-col">
             <AnnouncementBar
-              message="🏥 Next Health Camp: October 25th, 2025 - Free Diabetes Screening Available"
+              message="Annual ACDA conference on 25th and 26th October 2025."
               priority="info"
             />
             <Header />

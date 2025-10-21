@@ -1,9 +1,11 @@
 export default function EventsSection() {
   return (
-    <section className="bg-white py-16">
-      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <h2 className="mb-4 text-3xl font-bold text-primary-800 sm:text-4xl">Events</h2>
+    <section className="bg-white py-16 lg:py-24">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-12 text-center lg:mb-16">
+          <h2 className="mb-4 text-3xl font-bold text-primary-800 sm:text-4xl lg:text-5xl">
+            Events
+          </h2>
           <p className="mx-auto max-w-3xl text-lg text-gray-600">
             Each event reflects our unwavering dedication to creating a healthier, better-informed
             community
@@ -123,7 +125,8 @@ export default function EventsSection() {
             </p>
           </div>
         </div>
-        <div className="mt-6 flex w-full items-center justify-center">
+
+        <div className="mt-12 flex w-full items-center justify-center lg:mt-16">
           <a
             href="/events"
             className="inline-flex items-center justify-center rounded-lg bg-primary px-8 py-3 text-lg font-semibold text-white transition-colors hover:bg-primary/90"

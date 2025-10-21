@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, MapPin } from "lucide-react";
 import Image from "next/image";
 
 export default function Footer() {
@@ -12,14 +12,9 @@ export default function Footer() {
       { name: "About", href: "/about" },
       { name: "Membership", href: "/membership" },
     ],
-    // resources: [
-    //   { name: "Blog", href: "/blog" },
-    //   { name: "FAQs", href: "/faq" },
-    //   { name: "Support", href: "/support" },
-    //   { name: "Privacy Policy", href: "/privacy" },
-    // ],
+    resources: [{ name: "Facebook", href: "https://www.facebook.com/share/16ZiaeyVtn" }],
     contact: [
-      { icon: Phone, text: "+1 (555) 123-4567" },
+      // { icon: Phone, text: "+1 (555) 123-4567" },
       { icon: Mail, text: "info@acda.org.in" },
       {
         icon: MapPin,
@@ -31,13 +26,15 @@ export default function Footer() {
   return (
     <footer className="bg-primary text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 lg:grid-cols-4">
           {/* Brand Section */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center space-x-2">
               <Image
                 src={"/logos/logo.jpg"}
                 className="h-full w-full md:h-[50px] md:w-[54px]"
+                width={30}
+                height={30}
                 alt={"acda_logo"}
               />
               <span className="text-xl font-bold">Asansol Coalfield Diabetes Association</span>
@@ -49,6 +46,7 @@ export default function Footer() {
 
           {/* Company Links */}
           <div>
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Links</h3>
             <ul className="space-y-2">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
@@ -64,13 +62,15 @@ export default function Footer() {
           </div>
 
           {/* Resources Links */}
-          {/* <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Resources</h3>
+          <div>
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Social Media</h3>
             <ul className="space-y-2">
               {footerLinks.resources.map((link) => (
                 <li key={link.name}>
                   <Link
                     href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-sm text-gray-300 transition-colors hover:text-accent"
                   >
                     {link.name}
@@ -78,7 +78,7 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </div> */}
+          </div>
 
           {/* Contact Info */}
           <div>
