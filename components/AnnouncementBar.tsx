@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Info, AlertTriangle, AlertCircle } from "lucide-react";
+import { Info, AlertTriangle, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type AnnouncementPriority = "info" | "warning" | "urgent";
@@ -44,7 +44,7 @@ export default function AnnouncementBar({
   message,
   priority = "info",
   storageKey = "announcement-dismissed",
-  dismissDuration = 24,
+  // dismissDuration = 24,
 }: AnnouncementBarProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -71,18 +71,18 @@ export default function AnnouncementBar({
     setTimeout(() => setIsAnimating(true), 10);
   }, [storageKey]);
 
-  const handleDismiss = () => {
-    // Animate out
-    setIsAnimating(false);
+  // const handleDismiss = () => {
+  //   // Animate out
+  //   setIsAnimating(false);
 
-    // Set dismissal time in localStorage
-    const dismissUntil = new Date();
-    dismissUntil.setHours(dismissUntil.getHours() + dismissDuration);
-    localStorage.setItem(storageKey, dismissUntil.toISOString());
+  //   // Set dismissal time in localStorage
+  //   const dismissUntil = new Date();
+  //   dismissUntil.setHours(dismissUntil.getHours() + dismissDuration);
+  //   localStorage.setItem(storageKey, dismissUntil.toISOString());
 
-    // Remove from DOM after animation
-    setTimeout(() => setIsVisible(false), 300);
-  };
+  //   // Remove from DOM after animation
+  //   setTimeout(() => setIsVisible(false), 300);
+  // };
 
   if (!isVisible) return null;
 

@@ -139,12 +139,12 @@ export default function AboutPage() {
                 </li>
               </ol>
               <div className="mt-3 flex items-center justify-center text-lg italic leading-relaxed text-primary-50">
-                <span className="mr-2 text-3xl">"</span>
+                <span className="mr-2 text-3xl">`&quot;`</span>
                 <p className="max-w-3xl text-center">
                   --- Our mission is to unite science, service, and compassion for a diabetes-free
                   tomorrow.
                 </p>
-                <span className="ml-2 text-3xl">"</span>
+                <span className="ml-2 text-3xl">`&quot;`</span>
               </div>
             </div>
 
