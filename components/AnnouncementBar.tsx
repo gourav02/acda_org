@@ -107,7 +107,7 @@ export default function AnnouncementBar({
         </div>
 
         {/* Close Button */}
-        <button
+        {/* <button
           onClick={handleDismiss}
           className={cn(
             "flex-shrink-0 rounded-md p-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
@@ -116,7 +116,7 @@ export default function AnnouncementBar({
           aria-label="Dismiss announcement"
         >
           <X className="h-5 w-5" />
-        </button>
+        </button> */}
       </div>
     </div>
   );

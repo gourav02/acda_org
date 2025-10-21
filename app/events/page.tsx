@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Calendar, MapPin, Clock, Loader2 } from "lucide-react";
@@ -93,8 +92,25 @@ export default function EventsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-primary to-primary-200 py-20">
+      <section className="relative overflow-hidden bg-gradient-to-r from-primary to-primary-200 py-24 md:py-32">
+        {/* Background Image */}
+        <div className="absolute inset-0 h-full w-full">
+          <Image
+            src="/images/events.jpg"
+            alt="Events Background"
+            fill
+            className="object-cover object-center"
+            priority
+            quality={95}
+            sizes="100vw"
+          />
+          {/* Medium backdrop overlay */}
+          <div className="absolute inset-0 bg-primary/70 backdrop-blur-[2px]" />
+        </div>
+
+        {/* Grid Pattern Overlay */}
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="mb-6 flex justify-center">
@@ -105,7 +121,7 @@ export default function EventsPage() {
             <h1 className="mb-4 text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
               Events and Activities
             </h1>
-            <p className="mx-auto max-w-2xl text-xl text-primary-100">
+            <p className="mx-auto max-w-2xl text-xl text-white/90">
               ACDA conducts a wide range of community and academic activities throughout the year to
               fulfill its mission of education and prevention
             </p>
@@ -189,10 +205,13 @@ export default function EventsPage() {
                           unoptimized
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+
                         {/* Date Badge */}
                         <div className="absolute right-4 top-4 rounded-lg bg-white px-3 py-2 shadow-lg">
                           <p className="text-center text-xs font-semibold text-gray-600">
-                            {new Date(event.date).toLocaleDateString("en-US", { month: "short" })}
+                            {new Date(event.date).toLocaleDateString("en-US", {
+                              month: "short",
+                            })}
                           </p>
                           <p className="text-center text-2xl font-bold text-primary">
                             {new Date(event.date).getDate()}
@@ -210,7 +229,6 @@ export default function EventsPage() {
                       <h3 className="mb-3 line-clamp-2 text-xl font-bold text-primary-800 transition-colors group-hover:text-primary">
                         {event.title}
                       </h3>
-
                       <p className="mb-4 line-clamp-3 text-gray-600">{event.description}</p>
 
                       {/* Event Meta */}
@@ -263,7 +281,6 @@ export default function EventsPage() {
                   >
                     Previous
                   </Button>
-
                   <div className="flex gap-2">
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                       <Button
@@ -280,7 +297,6 @@ export default function EventsPage() {
                       </Button>
                     ))}
                   </div>
-
                   <Button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
@@ -312,7 +328,6 @@ export default function EventsPage() {
                 {selectedEvent?.location && (
                   <span className="flex items-center gap-2">
                     <MapPin className="h-4 w-4" />
-
                     <a
                       href={selectedEvent.location}
                       target="_blank"
@@ -326,6 +341,7 @@ export default function EventsPage() {
               </div>
             </DialogDescription>
           </DialogHeader>
+
           {selectedEvent && (
             <div className="space-y-4">
               {selectedEvent.imageUrl && (

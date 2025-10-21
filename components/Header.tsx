@@ -5,6 +5,7 @@ import { Menu, X, ChevronDown, LogOut, LayoutDashboard } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,6 +20,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
 
   // Prevent hydration mismatch by only rendering session-dependent UI after mount
   useEffect(() => {
@@ -58,20 +60,27 @@ export default function Header() {
     { name: "Membership", href: "/membership" },
   ];
 
+  const isActive = (href: string) => {
+    if (href === "/") {
+      return pathname === "/";
+    }
+    return pathname.startsWith(href);
+  };
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-primary-700 bg-primary">
+    <header className="sticky top-10 z-40 w-full border-b border-primary-700 bg-primary">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8">
         {/* Logo */}
         <div className="flex lg:flex-1">
-          <Link href="/" className="flex items-center space-x-4">
+          <Link href="/" className="flex items-center space-x-2 md:space-x-4">
             <Image
               src={"/logos/logo.jpg"}
-              className="h-full w-full md:h-[60px] md:w-[64px]"
-              width={30}
-              height={30}
+              className="h-10 w-10 md:h-[60px] md:w-[64px]"
+              width={64}
+              height={60}
               alt={"acda_logo"}
             />
-            <span className="text-xl font-bold text-white">
+            <span className="text-sm font-bold text-white md:text-xl">
               Asansol Coalfield Diabetes Association
             </span>
           </Link>
@@ -96,7 +105,11 @@ export default function Header() {
             <Link
               key={item.name}
               href={item.href}
-              className="text-sm font-semibold leading-6 text-white transition-colors hover:text-accent"
+              className={`relative pb-1 text-sm font-semibold leading-6 text-white transition-colors hover:text-accent ${
+                isActive(item.href)
+                  ? "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-white"
+                  : ""
+              }`}
             >
               {item.name}
             </Link>
@@ -158,7 +171,9 @@ export default function Header() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="block rounded-md px-3 py-2 text-base font-medium text-white hover:bg-primary-700 hover:text-accent"
+                className={`block rounded-md px-3 py-2 text-base font-medium text-white hover:bg-primary-700 hover:text-accent ${
+                  isActive(item.href) ? "border-b-2 border-white" : ""
+                }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.name}

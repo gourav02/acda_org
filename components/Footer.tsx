@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, MapPin } from "lucide-react";
+import { Mail, MapPin, Facebook } from "lucide-react";
 import Image from "next/image";
 
 export default function Footer() {
@@ -12,9 +12,14 @@ export default function Footer() {
       { name: "About", href: "/about" },
       { name: "Membership", href: "/membership" },
     ],
-    resources: [{ name: "Facebook", href: "https://www.facebook.com/share/16ZiaeyVtn" }],
+    resources: [
+      {
+        name: "Facebook",
+        href: "https://www.facebook.com/share/16ZiaeyVtn",
+        icon: Facebook,
+      },
+    ],
     contact: [
-      // { icon: Phone, text: "+1 (555) 123-4567" },
       { icon: Mail, text: "info@acda.org.in" },
       {
         icon: MapPin,
@@ -26,68 +31,71 @@ export default function Footer() {
   return (
     <footer className="bg-primary text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {/* Brand Section */}
-          <div className="space-y-4">
-            <Link href="/" className="flex items-center space-x-2">
+          <div className="space-y-4 md:col-span-2 lg:col-span-1">
+            <Link href="/" className="flex items-center space-x-3">
               <Image
                 src={"/logos/logo.jpg"}
-                className="h-full w-full md:h-[50px] md:w-[54px]"
-                width={30}
-                height={30}
+                className="h-12 w-12 flex-shrink-0"
+                width={48}
+                height={48}
                 alt={"acda_logo"}
               />
-              <span className="text-xl font-bold">Asansol Coalfield Diabetes Association</span>
+              <span className="text-base font-bold leading-tight sm:text-lg">
+                Asansol Coalfield Diabetes Association
+              </span>
             </Link>
-            {/* <p className="text-sm text-gray-300">
-              Committed to Diabetes Care & Awareness in the Asansol Coalfield region.
-            </p> */}
           </div>
 
-          {/* Company Links */}
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Links</h3>
-            <ul className="space-y-2">
-              {footerLinks.company.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-gray-300 transition-colors hover:text-accent"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Links and Social Media Combined */}
+          <div className="grid grid-cols-2 gap-8 md:col-span-2 lg:col-span-1">
+            {/* Company Links */}
+            <div>
+              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Links</h3>
+              <ul className="space-y-2">
+                {footerLinks.company.map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-gray-300 transition-colors hover:text-accent"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Resources Links */}
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Social Media</h3>
-            <ul className="space-y-2">
-              {footerLinks.resources.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-gray-300 transition-colors hover:text-accent"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {/* Social Media */}
+            <div>
+              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Social Media</h3>
+              <ul className="space-y-2">
+                {footerLinks.resources.map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center space-x-2 text-sm text-gray-300 transition-colors hover:text-accent"
+                    >
+                      <link.icon className="h-4 w-4" />
+                      <span>{link.name}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Contact Info */}
-          <div>
+          <div className="md:col-span-2 lg:col-span-1">
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Contact Us</h3>
             <ul className="space-y-3">
               {footerLinks.contact.map((item, index) => (
                 <li key={index} className="flex items-start space-x-2">
                   <item.icon className="mt-0.5 h-5 w-5 flex-shrink-0 text-accent" />
-                  <span className="text-sm text-gray-300">{item.text}</span>
+                  <span className="break-words text-sm text-gray-300">{item.text}</span>
                 </li>
               ))}
             </ul>

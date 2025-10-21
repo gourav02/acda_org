@@ -1,10 +1,26 @@
 import { Activity, Target, Eye, Heart, Award, Focus } from "lucide-react";
+import Image from "next/image";
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-primary to-primary-700 py-20">
+      <section className="relative overflow-hidden bg-gradient-to-r from-primary to-primary-700 py-24 md:py-32">
+        {/* Background Image */}
+        <div className="absolute inset-0 h-full w-full">
+          <Image
+            src="/images/about.png"
+            alt="About Background"
+            fill
+            className="object-cover object-center"
+            priority
+            quality={95}
+            sizes="100vw"
+          />
+          {/* Medium backdrop overlay */}
+          <div className="absolute inset-0 bg-primary/70 backdrop-blur-[2px]" />
+        </div>
+
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -123,12 +139,12 @@ export default function AboutPage() {
                 </li>
               </ol>
               <div className="mt-3 flex items-center justify-center text-lg italic leading-relaxed text-primary-50">
-                <span className="mr-2 text-3xl">“</span>
+                <span className="mr-2 text-3xl">"</span>
                 <p className="max-w-3xl text-center">
                   --- Our mission is to unite science, service, and compassion for a diabetes-free
                   tomorrow.
                 </p>
-                <span className="ml-2 text-3xl">”</span>
+                <span className="ml-2 text-3xl">"</span>
               </div>
             </div>
 
