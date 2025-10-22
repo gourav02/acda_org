@@ -481,6 +481,20 @@ export default function MembershipForm() {
                     </>
                   )}
                 </Button>
+                <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600" />
+                    <div>
+                      <p className="text-sm font-medium text-amber-900">
+                        Membership Applications Temporarily Closed
+                      </p>
+                      <p className="mt-1 text-sm text-amber-700">
+                        We are not currently accepting new membership applications. Please check
+                        back later or contact us for more information.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </form>
           </Form>
