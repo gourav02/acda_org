@@ -11,11 +11,16 @@ import {
   MapPin,
   Image as ImageIcon,
   X,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB per image
+const MAX_TOTAL_SIZE = 100 * 1024 * 1024; // 100MB total
+const MAX_IMAGE_COUNT = 15; // Maximum 15 images
 
 export default function EventForm() {
   const [title, setTitle] = useState("");
@@ -28,32 +33,86 @@ export default function EventForm() {
   const [uploadStatus, setUploadStatus] = useState<"idle" | "success" | "error">("idle");
   const [uploadMessage, setUploadMessage] = useState("");
 
+  const getTotalSize = (files: File[]) => {
+    return files.reduce((total, file) => total + file.size, 0);
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024 * 1024) {
+      return `${(bytes / 1024).toFixed(1)} KB`;
+    }
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
+    // Clear previous errors when new files are selected
+    setUploadStatus("idle");
+    setUploadMessage("");
+
+    // Check if adding these files would exceed the maximum count
+    if (selectedFiles.length + files.length > MAX_IMAGE_COUNT) {
+      setUploadMessage(
+        `Maximum ${MAX_IMAGE_COUNT} images allowed. You can add ${MAX_IMAGE_COUNT - selectedFiles.length} more.`
+      );
+      setUploadStatus("error");
+      return;
+    }
+
     // Validate file types and sizes
     const validFiles: File[] = [];
     const newPreviewUrls: string[] = [];
+    const errors: string[] = [];
 
     for (const file of files) {
       // Validate file type
       if (!file.type.startsWith("image/")) {
-        setUploadMessage("Please select only image files");
-        setUploadStatus("error");
+        errors.push(`${file.name}: Not an image file`);
         continue;
       }
 
-      // Validate file size (10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        setUploadMessage("File size must be less than 10MB");
-        setUploadStatus("error");
+      // Validate individual file size
+      if (file.size > MAX_FILE_SIZE) {
+        errors.push(`${file.name}: Exceeds 10MB limit (${formatFileSize(file.size)})`);
         continue;
       }
 
       validFiles.push(file);
+    }
 
-      // Create preview
+    // Check total size with existing files
+    const potentialTotalSize = getTotalSize([...selectedFiles, ...validFiles]);
+    if (potentialTotalSize > MAX_TOTAL_SIZE) {
+      const currentSize = getTotalSize(selectedFiles);
+      const remaining = MAX_TOTAL_SIZE - currentSize;
+      setUploadMessage(
+        `Total size would exceed 100MB limit. Current: ${formatFileSize(currentSize)}, Remaining: ${formatFileSize(remaining)}`
+      );
+      setUploadStatus("error");
+      return;
+    }
+
+    // Show errors if any
+    if (errors.length > 0) {
+      setUploadMessage(errors.join("; "));
+      setUploadStatus("error");
+
+      // If no valid files, return early
+      if (validFiles.length === 0) {
+        return;
+      }
+
+      // Auto-clear error after 4 seconds if there were some valid files
+      setTimeout(() => {
+        setUploadStatus("idle");
+        setUploadMessage("");
+      }, 4000);
+    }
+
+    // Create previews for valid files
+    validFiles.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         newPreviewUrls.push(reader.result as string);
@@ -62,17 +121,23 @@ export default function EventForm() {
         }
       };
       reader.readAsDataURL(file);
-    }
+    });
 
-    if (validFiles.length > 0) {
-      setSelectedFiles((prev) => [...prev, ...validFiles]);
-      setUploadStatus("idle");
-    }
+    setSelectedFiles((prev) => [...prev, ...validFiles]);
+
+    // Reset file input
+    e.target.value = "";
   };
 
   const removeImage = (index: number) => {
     setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
     setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
+
+    // Clear any errors when removing images
+    if (uploadStatus === "error") {
+      setUploadStatus("idle");
+      setUploadMessage("");
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -90,7 +155,20 @@ export default function EventForm() {
         return;
       }
 
-      setUploadMessage("Creating event and uploading images...");
+      // Final size check before submission
+      const totalSize = getTotalSize(selectedFiles);
+      if (totalSize > MAX_TOTAL_SIZE) {
+        setUploadMessage(`Total size (${formatFileSize(totalSize)}) exceeds 100MB limit`);
+        setUploadStatus("error");
+        setIsUploading(false);
+        return;
+      }
+
+      setUploadMessage(
+        selectedFiles.length > 0
+          ? `Creating event and uploading ${selectedFiles.length} image${selectedFiles.length > 1 ? "s" : ""}...`
+          : "Creating event..."
+      );
 
       // Create FormData with all event data and images
       const formData = new FormData();
@@ -117,7 +195,11 @@ export default function EventForm() {
       }
 
       setUploadStatus("success");
-      setUploadMessage("Event created successfully!");
+      setUploadMessage(
+        selectedFiles.length > 0
+          ? `Event created successfully with ${selectedFiles.length} image${selectedFiles.length > 1 ? "s" : ""}!`
+          : "Event created successfully!"
+      );
 
       // Reset form
       setTimeout(() => {
@@ -138,6 +220,9 @@ export default function EventForm() {
       setIsUploading(false);
     }
   };
+
+  const currentTotalSize = getTotalSize(selectedFiles);
+  const remainingCount = MAX_IMAGE_COUNT - selectedFiles.length;
 
   return (
     <div className="rounded-2xl bg-white p-6 shadow-lg md:p-8">
@@ -226,22 +311,40 @@ export default function EventForm() {
         {/* Image Upload */}
         <div>
           <Label className="text-base font-semibold text-gray-700">Event Images (Optional)</Label>
-          <p className="mb-3 text-sm text-gray-500">Upload multiple images to showcase the event</p>
+          <p className="mb-2 text-sm text-gray-500">Upload multiple images to showcase the event</p>
+
+          {/* Upload Stats */}
+          {selectedFiles.length > 0 && (
+            <div className="mb-3 flex flex-wrap gap-2 text-xs text-gray-600">
+              <span className="rounded-full bg-blue-100 px-3 py-1 font-medium text-blue-700">
+                {selectedFiles.length} / {MAX_IMAGE_COUNT} images
+              </span>
+              <span className="rounded-full bg-purple-100 px-3 py-1 font-medium text-purple-700">
+                {formatFileSize(currentTotalSize)} / 100MB used
+              </span>
+              {remainingCount > 0 && (
+                <span className="rounded-full bg-green-100 px-3 py-1 font-medium text-green-700">
+                  {remainingCount} more allowed
+                </span>
+              )}
+            </div>
+          )}
+
           <input
             type="file"
             id="file-input"
             accept="image/*"
             onChange={handleFileChange}
             className="hidden"
-            disabled={isUploading}
+            disabled={isUploading || selectedFiles.length >= MAX_IMAGE_COUNT}
             multiple
           />
-          
+
           {/* Image Previews */}
           {previewUrls.length > 0 && (
             <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
               {previewUrls.map((url, index) => (
-                <div key={index} className="relative group">
+                <div key={index} className="group relative">
                   <Image
                     src={url}
                     alt={`Preview ${index + 1}`}
@@ -253,46 +356,70 @@ export default function EventForm() {
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
-                    className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                    className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100"
                     disabled={isUploading}
                   >
                     <X className="h-4 w-4" />
                   </button>
-                  <div className="mt-1 truncate text-xs text-gray-600">
-                    {selectedFiles[index]?.name}
+                  <div className="mt-1 flex items-center justify-between gap-1">
+                    <div className="truncate text-xs text-gray-600">
+                      {selectedFiles[index]?.name}
+                    </div>
+                    <div className="whitespace-nowrap text-xs text-gray-500">
+                      {formatFileSize(selectedFiles[index]?.size || 0)}
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           )}
-          
-          <label
-            htmlFor="file-input"
-            className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-6 transition-colors hover:border-primary-400 hover:bg-primary-50 ${
-              isUploading ? "cursor-not-allowed opacity-50" : ""
-            }`}
-          >
-            <ImageIcon className="mb-2 h-12 w-12 text-gray-400" />
-            <p className="text-sm font-medium text-gray-700">
-              {previewUrls.length > 0 ? "Click to add more images" : "Click to upload images"}
-            </p>
-            <p className="mt-1 text-xs text-gray-500">PNG, JPG, WEBP up to 10MB each</p>
-          </label>
+
+          {/* Upload Area */}
+          {selectedFiles.length < MAX_IMAGE_COUNT && (
+            <label
+              htmlFor="file-input"
+              className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-6 transition-colors hover:border-primary-400 hover:bg-primary-50 ${
+                isUploading ? "cursor-not-allowed opacity-50" : ""
+              }`}
+            >
+              <ImageIcon className="mb-2 h-12 w-12 text-gray-400" />
+              <p className="text-sm font-medium text-gray-700">
+                {previewUrls.length > 0 ? "Click to add more images" : "Click to upload images"}
+              </p>
+              <p className="mt-1 text-xs text-gray-500">
+                PNG, JPG, WEBP • Max 10MB per image • Up to {MAX_IMAGE_COUNT} images • 100MB total
+              </p>
+            </label>
+          )}
+
+          {/* Max Images Reached */}
+          {selectedFiles.length >= MAX_IMAGE_COUNT && (
+            <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 p-4">
+              <AlertCircle className="h-5 w-5 text-amber-600" />
+              <span className="text-sm font-medium text-amber-800">
+                Maximum of {MAX_IMAGE_COUNT} images reached
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Status Message */}
         {uploadMessage && (
           <div
             className={`flex items-center gap-2 rounded-lg p-4 ${
-              uploadStatus === "success" ? "bg-green-50 text-green-800" : uploadStatus === "error" ? "bg-red-50 text-red-800" : "bg-blue-50 text-blue-800"
+              uploadStatus === "success"
+                ? "bg-green-50 text-green-800"
+                : uploadStatus === "error"
+                  ? "bg-red-50 text-red-800"
+                  : "bg-blue-50 text-blue-800"
             }`}
           >
             {uploadStatus === "success" ? (
-              <CheckCircle className="h-5 w-5" />
+              <CheckCircle className="h-5 w-5 flex-shrink-0" />
             ) : uploadStatus === "error" ? (
-              <XCircle className="h-5 w-5" />
+              <XCircle className="h-5 w-5 flex-shrink-0" />
             ) : (
-              <Loader2 className="h-5 w-5 animate-spin" />
+              <Loader2 className="h-5 w-5 flex-shrink-0 animate-spin" />
             )}
             <span className="text-sm font-medium">{uploadMessage}</span>
           </div>

@@ -42,9 +42,7 @@ export async function DELETE(request: NextRequest) {
       try {
         // Delete multiple images
         await Promise.all(
-          event.publicIds.map((publicId: string) =>
-            cloudinary.uploader.destroy(publicId)
-          )
+          event.publicIds.map((publicId: string) => cloudinary.uploader.destroy(publicId))
         );
       } catch (cloudinaryError) {
         console.error("Error deleting images from Cloudinary:", cloudinaryError);

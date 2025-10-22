@@ -32,7 +32,7 @@ export default function Footer() {
   return (
     <footer className="bg-primary text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
-        <div className="grid grid-cols-1 gap-6 sm:gap-15 md:grid-cols-2 lg:grid-cols-3">
+        <div className="sm:gap-15 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* Brand Section */}
           <div className="space-y-4 md:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center space-x-3">
