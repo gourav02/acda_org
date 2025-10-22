@@ -53,12 +53,10 @@ export default function EventsPage() {
     fetchEvents();
   }, []);
 
-  // Reset to page 1 when switching tabs
   useEffect(() => {
     setCurrentPage(1);
   }, [activeTab]);
 
-  // Reset image index when event changes
   useEffect(() => {
     setCurrentImageIndex(0);
   }, [selectedEvent]);
@@ -91,7 +89,6 @@ export default function EventsPage() {
 
   const displayEvents = activeTab === "upcoming" ? upcomingEvents : pastEvents;
 
-  // Pagination logic
   const totalPages = Math.ceil(displayEvents.length / EVENTS_PER_PAGE);
   const startIndex = (currentPage - 1) * EVENTS_PER_PAGE;
   const endIndex = startIndex + EVENTS_PER_PAGE;
@@ -104,9 +101,26 @@ export default function EventsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-primary to-primary-700 py-20">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+      {/* Hero Section with Background Image */}
+      <section className="relative overflow-hidden py-20">
+        {/* Background Image with Blur */}
+        <div className="absolute inset-0">
+          <Image
+            src="/images/events.jpg"
+            alt="Events background"
+            fill
+            className="object-cover"
+            style={{ filter: "blur(2px)" }}
+            priority
+            unoptimized
+          />
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/40 via-primary-700/35 to-primary/40" />
+          {/* Grid Pattern Overlay */}
+          <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+        </div>
+
+        {/* Content */}
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="mb-6 flex justify-center">
@@ -114,10 +128,10 @@ export default function EventsPage() {
                 <Calendar className="h-16 w-16 text-white" />
               </div>
             </div>
-            <h1 className="mb-4 text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
+            <h1 className="mb-4 text-4xl font-bold tracking-tight text-white drop-shadow-lg sm:text-5xl md:text-6xl">
               Our Events
             </h1>
-            <p className="mx-auto max-w-2xl text-xl text-primary-100">
+            <p className="mx-auto max-w-2xl text-xl text-white drop-shadow-md">
               Join us in our mission to raise awareness and promote diabetes care through community
               events
             </p>
@@ -307,7 +321,7 @@ export default function EventsPage() {
         </div>
       </section>
 
-      {/* Event Detail Dialog with Image Carousel - FIXED LAYOUT */}
+      {/* Event Detail Dialog with Image Carousel */}
       <Dialog open={!!selectedEvent} onOpenChange={() => setSelectedEvent(null)}>
         <DialogContent className="flex h-[90vh] max-w-6xl flex-col gap-0 p-0">
           {/* Header - Fixed */}
