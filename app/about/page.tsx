@@ -9,7 +9,7 @@ export default function AboutPage() {
         {/* Background Image */}
         <div className="absolute inset-0 h-full w-full">
           <Image
-            src="/images/about.png"
+            src="/images/acdahome.JPG"
             alt="About Background"
             fill
             className="object-cover object-center"

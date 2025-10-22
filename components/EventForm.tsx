@@ -30,24 +30,23 @@ export default function EventForm() {
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-
     if (files.length === 0) return;
 
-    // Validate files
+    // Validate file types and sizes
     const validFiles: File[] = [];
     const newPreviewUrls: string[] = [];
 
     for (const file of files) {
       // Validate file type
       if (!file.type.startsWith("image/")) {
-        setUploadMessage("All files must be images");
+        setUploadMessage("Please select only image files");
         setUploadStatus("error");
         continue;
       }
 
       // Validate file size (10MB)
       if (file.size > 10 * 1024 * 1024) {
-        setUploadMessage("Each file must be less than 10MB");
+        setUploadMessage("File size must be less than 10MB");
         setUploadStatus("error");
         continue;
       }
@@ -76,37 +75,6 @@ export default function EventForm() {
     setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const uploadToCloudinary = async (file: File): Promise<{ url: string; publicId: string }> => {
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-
-    if (!cloudName || !uploadPreset) {
-      throw new Error("Cloudinary configuration is missing");
-    }
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", uploadPreset);
-    formData.append("folder", "acda/events");
-
-    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Cloudinary upload error:", errorData);
-      throw new Error(errorData.error?.message || "Failed to upload image to Cloudinary");
-    }
-
-    const data = await response.json();
-    return {
-      url: data.secure_url,
-      publicId: data.public_id,
-    };
-  };
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsUploading(true);
@@ -122,32 +90,24 @@ export default function EventForm() {
         return;
       }
 
-      const imageUrls: string[] = [];
-      const publicIds: string[] = [];
+      setUploadMessage("Creating event and uploading images...");
 
-      // Upload all images if selected
-      if (selectedFiles.length > 0) {
-        for (const file of selectedFiles) {
-          const cloudinaryData = await uploadToCloudinary(file);
-          imageUrls.push(cloudinaryData.url);
-          publicIds.push(cloudinaryData.publicId);
-        }
-      }
+      // Create FormData with all event data and images
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("date", date);
+      formData.append("location", location);
 
-      // Create event
+      // Append all image files
+      selectedFiles.forEach((file) => {
+        formData.append("images", file);
+      });
+
+      // Single API call to create event with all images
       const response = await fetch("/api/events/create", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          description,
-          date,
-          location,
-          imageUrls,
-          publicIds,
-        }),
+        body: formData,
       });
 
       const data = await response.json();
@@ -267,12 +227,21 @@ export default function EventForm() {
         <div>
           <Label className="text-base font-semibold text-gray-700">Event Images (Optional)</Label>
           <p className="mb-3 text-sm text-gray-500">Upload multiple images to showcase the event</p>
-
+          <input
+            type="file"
+            id="file-input"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="hidden"
+            disabled={isUploading}
+            multiple
+          />
+          
           {/* Image Previews */}
           {previewUrls.length > 0 && (
             <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
               {previewUrls.map((url, index) => (
-                <div key={index} className="relative">
+                <div key={index} className="relative group">
                   <Image
                     src={url}
                     alt={`Preview ${index + 1}`}
@@ -284,7 +253,7 @@ export default function EventForm() {
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
-                    className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white shadow-lg hover:bg-red-600"
+                    className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
                     disabled={isUploading}
                   >
                     <X className="h-4 w-4" />
@@ -296,17 +265,7 @@ export default function EventForm() {
               ))}
             </div>
           )}
-
-          {/* Upload Area */}
-          <input
-            type="file"
-            id="file-input"
-            accept="image/*"
-            multiple
-            onChange={handleFileChange}
-            className="hidden"
-            disabled={isUploading}
-          />
+          
           <label
             htmlFor="file-input"
             className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-6 transition-colors hover:border-primary-400 hover:bg-primary-50 ${
@@ -314,13 +273,10 @@ export default function EventForm() {
             }`}
           >
             <ImageIcon className="mb-2 h-12 w-12 text-gray-400" />
-            <p className="text-sm font-medium text-gray-700">Click to upload images</p>
+            <p className="text-sm font-medium text-gray-700">
+              {previewUrls.length > 0 ? "Click to add more images" : "Click to upload images"}
+            </p>
             <p className="mt-1 text-xs text-gray-500">PNG, JPG, WEBP up to 10MB each</p>
-            {previewUrls.length > 0 && (
-              <p className="mt-2 text-xs font-medium text-primary-600">
-                {previewUrls.length} image{previewUrls.length > 1 ? "s" : ""} selected
-              </p>
-            )}
           </label>
         </div>
 
@@ -328,13 +284,15 @@ export default function EventForm() {
         {uploadMessage && (
           <div
             className={`flex items-center gap-2 rounded-lg p-4 ${
-              uploadStatus === "success" ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800"
+              uploadStatus === "success" ? "bg-green-50 text-green-800" : uploadStatus === "error" ? "bg-red-50 text-red-800" : "bg-blue-50 text-blue-800"
             }`}
           >
             {uploadStatus === "success" ? (
               <CheckCircle className="h-5 w-5" />
-            ) : (
+            ) : uploadStatus === "error" ? (
               <XCircle className="h-5 w-5" />
+            ) : (
+              <Loader2 className="h-5 w-5 animate-spin" />
             )}
             <span className="text-sm font-medium">{uploadMessage}</span>
           </div>

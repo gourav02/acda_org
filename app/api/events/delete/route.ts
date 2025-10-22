@@ -37,12 +37,17 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Event not found" }, { status: 404 });
     }
 
-    // Delete image from Cloudinary if exists
-    if (event.publicId) {
+    // Delete all images from Cloudinary if they exist
+    if (event.publicIds && event.publicIds.length > 0) {
       try {
-        await cloudinary.uploader.destroy(event.publicId);
+        // Delete multiple images
+        await Promise.all(
+          event.publicIds.map((publicId: string) =>
+            cloudinary.uploader.destroy(publicId)
+          )
+        );
       } catch (cloudinaryError) {
-        console.error("Error deleting image from Cloudinary:", cloudinaryError);
+        console.error("Error deleting images from Cloudinary:", cloudinaryError);
         // Continue with event deletion even if image deletion fails
       }
     }

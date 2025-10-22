@@ -23,7 +23,8 @@ export default function Footer() {
       { icon: Mail, text: "info@acda.org.in" },
       {
         icon: MapPin,
-        text: "Ground Floor, 01, Amar Saria Enclave, Hutton Road, M.N Saha Road, Dr. M.N Saha Road, Near Masjid, Hutton Road, Asansol, Paschim Bardhaman, West Bengal, 713301",
+        url: "https://maps.app.goo.gl/eGHY5eYpNhPh7XT5A",
+        text: "Office Location",
       },
     ],
   };
@@ -31,7 +32,7 @@ export default function Footer() {
   return (
     <footer className="bg-primary text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:gap-15 md:grid-cols-2 lg:grid-cols-3">
           {/* Brand Section */}
           <div className="space-y-4 md:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center space-x-3">
@@ -95,7 +96,14 @@ export default function Footer() {
               {footerLinks.contact.map((item, index) => (
                 <li key={index} className="flex items-start space-x-2">
                   <item.icon className="mt-0.5 h-5 w-5 flex-shrink-0 text-accent" />
-                  <span className="break-words text-sm text-gray-300">{item.text}</span>
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="line-clamp-1 text-primary hover:underline"
+                  >
+                    <span className="break-words text-sm text-gray-300 underline">{item.text}</span>
+                  </a>
                 </li>
               ))}
             </ul>

@@ -142,7 +142,7 @@ export default function EventGallery() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `url('/images/acda.png')`,
+            backgroundImage: `url('/images/con.JPG')`,
             filter: "blur(1px)",
             transform: "scale(1.02)",
           }}

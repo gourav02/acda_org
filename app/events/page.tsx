@@ -1,15 +1,10 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Calendar, MapPin, Clock, Loader2 } from "lucide-react";
+import { Calendar, MapPin, Clock, ChevronLeft, ChevronRight, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface Event {
   _id: string;
@@ -17,7 +12,7 @@ interface Event {
   description: string;
   date: string;
   location?: string;
-  imageUrl?: string;
+  imageUrls?: string[];
   isUpcoming: boolean;
 }
 
@@ -27,6 +22,7 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const EVENTS_PER_PAGE = 3;
 
@@ -62,6 +58,11 @@ export default function EventsPage() {
     setCurrentPage(1);
   }, [activeTab]);
 
+  // Reset image index when event changes
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [selectedEvent]);
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -74,6 +75,18 @@ export default function EventsPage() {
     return new Date(dateString).toLocaleDateString("en-US", {
       weekday: "long",
     });
+  };
+
+  const handlePrevImage = () => {
+    if (selectedEvent?.imageUrls) {
+      setCurrentImageIndex((prev) => (prev === 0 ? selectedEvent.imageUrls!.length - 1 : prev - 1));
+    }
+  };
+
+  const handleNextImage = () => {
+    if (selectedEvent?.imageUrls) {
+      setCurrentImageIndex((prev) => (prev === selectedEvent.imageUrls!.length - 1 ? 0 : prev + 1));
+    }
   };
 
   const displayEvents = activeTab === "upcoming" ? upcomingEvents : pastEvents;
@@ -92,25 +105,8 @@ export default function EventsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-primary to-primary-200 py-24 md:py-32">
-        {/* Background Image */}
-        <div className="absolute inset-0 h-full w-full">
-          <Image
-            src="/images/events.jpg"
-            alt="Events Background"
-            fill
-            className="object-cover object-center"
-            priority
-            quality={95}
-            sizes="100vw"
-          />
-          {/* Medium backdrop overlay */}
-          <div className="absolute inset-0 bg-primary/70 backdrop-blur-[2px]" />
-        </div>
-
-        {/* Grid Pattern Overlay */}
+      <section className="relative overflow-hidden bg-gradient-to-r from-primary to-primary-700 py-20">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="mb-6 flex justify-center">
@@ -119,11 +115,11 @@ export default function EventsPage() {
               </div>
             </div>
             <h1 className="mb-4 text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
-              Events and Activities
+              Our Events
             </h1>
-            <p className="mx-auto max-w-2xl text-xl text-white/90">
-              ACDA conducts a wide range of community and academic activities throughout the year to
-              fulfill its mission of education and prevention
+            <p className="mx-auto max-w-2xl text-xl text-primary-100">
+              Join us in our mission to raise awareness and promote diabetes care through community
+              events
             </p>
           </div>
         </div>
@@ -194,10 +190,10 @@ export default function EventsPage() {
                     }}
                   >
                     {/* Event Image */}
-                    {event.imageUrl ? (
+                    {event.imageUrls && event.imageUrls.length > 0 ? (
                       <div className="relative h-56 w-full overflow-hidden">
                         <Image
-                          src={event.imageUrl}
+                          src={event.imageUrls[0]}
                           alt={event.title}
                           fill
                           className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -205,18 +201,21 @@ export default function EventsPage() {
                           unoptimized
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-
                         {/* Date Badge */}
                         <div className="absolute right-4 top-4 rounded-lg bg-white px-3 py-2 shadow-lg">
                           <p className="text-center text-xs font-semibold text-gray-600">
-                            {new Date(event.date).toLocaleDateString("en-US", {
-                              month: "short",
-                            })}
+                            {new Date(event.date).toLocaleDateString("en-US", { month: "short" })}
                           </p>
                           <p className="text-center text-2xl font-bold text-primary">
                             {new Date(event.date).getDate()}
                           </p>
                         </div>
+                        {/* Image Count Badge */}
+                        {event.imageUrls.length > 1 && (
+                          <div className="absolute bottom-4 right-4 rounded-lg bg-black/60 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                            +{event.imageUrls.length} photos
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="flex h-56 w-full items-center justify-center bg-gradient-to-br from-primary-100 to-primary-200">
@@ -229,6 +228,7 @@ export default function EventsPage() {
                       <h3 className="mb-3 line-clamp-2 text-xl font-bold text-primary-800 transition-colors group-hover:text-primary">
                         {event.title}
                       </h3>
+
                       <p className="mb-4 line-clamp-3 text-gray-600">{event.description}</p>
 
                       {/* Event Meta */}
@@ -244,14 +244,7 @@ export default function EventsPage() {
                         {event.location && (
                           <div className="flex items-center gap-2 text-sm text-gray-500">
                             <MapPin className="h-4 w-4 flex-shrink-0 text-primary" />
-                            <a
-                              href={event.location}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="line-clamp-1 text-primary hover:underline"
-                            >
-                              {event.location}
-                            </a>
+                            <span className="line-clamp-1">{event.location}</span>
                           </div>
                         )}
                       </div>
@@ -281,6 +274,7 @@ export default function EventsPage() {
                   >
                     Previous
                   </Button>
+
                   <div className="flex gap-2">
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                       <Button
@@ -297,6 +291,7 @@ export default function EventsPage() {
                       </Button>
                     ))}
                   </div>
+
                   <Button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
@@ -312,55 +307,146 @@ export default function EventsPage() {
         </div>
       </section>
 
-      {/* Event Detail Dialog */}
+      {/* Event Detail Dialog with Image Carousel - FIXED LAYOUT */}
       <Dialog open={!!selectedEvent} onOpenChange={() => setSelectedEvent(null)}>
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-primary-800">
-              {selectedEvent?.title}
-            </DialogTitle>
-            <DialogDescription className="text-base">
-              <div className="mt-2 flex flex-wrap items-center gap-4 text-gray-600">
-                <span className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  {selectedEvent && formatDate(selectedEvent.date)}
-                </span>
-                {selectedEvent?.location && (
+        <DialogContent className="flex h-[90vh] max-w-6xl flex-col gap-0 p-0">
+          {/* Header - Fixed */}
+          <DialogHeader className="border-b bg-white px-6 py-4">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                <DialogTitle className="text-2xl font-bold text-primary-800 sm:text-3xl">
+                  {selectedEvent?.title}
+                </DialogTitle>
+                <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-gray-600">
                   <span className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4" />
-                    <a
-                      href={selectedEvent.location}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="line-clamp-1 text-primary hover:underline"
-                    >
-                      {selectedEvent.location}
-                    </a>
+                    <Calendar className="h-4 w-4 text-primary" />
+                    <span className="font-medium">
+                      {selectedEvent && formatDate(selectedEvent.date)}
+                    </span>
                   </span>
-                )}
-              </div>
-            </DialogDescription>
-          </DialogHeader>
-
-          {selectedEvent && (
-            <div className="space-y-4">
-              {selectedEvent.imageUrl && (
-                <div className="relative aspect-video w-full overflow-hidden rounded-lg">
-                  <Image
-                    src={selectedEvent.imageUrl}
-                    alt={selectedEvent.title}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 896px"
-                    unoptimized
-                  />
+                  {selectedEvent?.location && (
+                    <span className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-primary" />
+                      <span className="font-medium">{selectedEvent.location}</span>
+                    </span>
+                  )}
                 </div>
-              )}
-              <div className="prose max-w-none">
-                <p className="leading-relaxed text-gray-700">{selectedEvent.description}</p>
               </div>
             </div>
-          )}
+          </DialogHeader>
+
+          {/* Scrollable Content */}
+          <div className="flex-1 overflow-y-auto px-6 py-6">
+            {selectedEvent && (
+              <div className="space-y-6">
+                {/* Image Carousel */}
+                {selectedEvent.imageUrls && selectedEvent.imageUrls.length > 0 && (
+                  <div className="space-y-4">
+                    {/* Main Image */}
+                    <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-gray-100 shadow-lg">
+                      <Image
+                        src={selectedEvent.imageUrls[currentImageIndex]}
+                        alt={`${selectedEvent.title} - Image ${currentImageIndex + 1}`}
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 1536px) 100vw, 1280px"
+                        unoptimized
+                      />
+
+                      {/* Navigation Arrows */}
+                      {selectedEvent.imageUrls.length > 1 && (
+                        <>
+                          <button
+                            onClick={handlePrevImage}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/95 p-3 shadow-xl transition-all hover:scale-110 hover:bg-white"
+                            aria-label="Previous image"
+                          >
+                            <ChevronLeft className="h-6 w-6 text-primary" />
+                          </button>
+                          <button
+                            onClick={handleNextImage}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/95 p-3 shadow-xl transition-all hover:scale-110 hover:bg-white"
+                            aria-label="Next image"
+                          >
+                            <ChevronRight className="h-6 w-6 text-primary" />
+                          </button>
+
+                          {/* Image Counter */}
+                          <div className="absolute bottom-4 right-4 rounded-lg bg-black/75 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm">
+                            {currentImageIndex + 1} / {selectedEvent.imageUrls.length}
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Thumbnail Strip */}
+                    {selectedEvent.imageUrls.length > 1 && (
+                      <div className="overflow-x-auto pb-2">
+                        <div className="flex gap-3">
+                          {selectedEvent.imageUrls.map((url, index) => (
+                            <button
+                              key={index}
+                              onClick={() => setCurrentImageIndex(index)}
+                              className={`relative h-20 w-28 flex-shrink-0 overflow-hidden rounded-lg transition-all ${
+                                currentImageIndex === index
+                                  ? "scale-105 ring-4 ring-primary ring-offset-2"
+                                  : "opacity-60 hover:scale-105 hover:opacity-100"
+                              }`}
+                            >
+                              <Image
+                                src={url}
+                                alt={`Thumbnail ${index + 1}`}
+                                fill
+                                className="object-cover"
+                                sizes="112px"
+                                unoptimized
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Event Description */}
+                <div className="rounded-xl bg-gradient-to-br from-primary-50 to-white p-6 shadow-sm">
+                  <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-primary-800">
+                    <div className="h-1 w-1 rounded-full bg-primary"></div>
+                    About This Event
+                  </h3>
+                  <p className="whitespace-pre-wrap leading-relaxed text-gray-700">
+                    {selectedEvent.description}
+                  </p>
+                </div>
+
+                {/* Event Details Card */}
+                <div className="grid gap-4 rounded-xl border-2 border-primary-200 bg-white p-6 shadow-sm md:grid-cols-2">
+                  <div className="space-y-2">
+                    <h4 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary-600">
+                      <Calendar className="h-4 w-4" />
+                      Date & Day
+                    </h4>
+                    <p className="text-base font-medium text-gray-800">
+                      {formatTime(selectedEvent.date)}
+                    </p>
+                    <p className="text-sm text-gray-600">{formatDate(selectedEvent.date)}</p>
+                  </div>
+                  {selectedEvent.location && (
+                    <div className="space-y-2">
+                      <h4 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary-600">
+                        <MapPin className="h-4 w-4" />
+                        Location
+                      </h4>
+                      <p className="text-base font-medium text-gray-800">
+                        {selectedEvent.location}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>

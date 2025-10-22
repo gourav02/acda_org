@@ -5,8 +5,8 @@ export interface IEvent extends Document {
   description: string;
   date: Date;
   location?: string;
-  imageUrl?: string;
-  publicId?: string;
+  imageUrls?: string[];
+  publicIds?: string[];
   isUpcoming: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -33,13 +33,13 @@ const EventSchema = new Schema<IEvent>(
       type: String,
       trim: true,
     },
-    imageUrl: {
-      type: String,
-      trim: true,
+    imageUrls: {
+      type: [String],
+      default: [],
     },
-    publicId: {
-      type: String,
-      trim: true,
+    publicIds: {
+      type: [String],
+      default: [],
     },
     isUpcoming: {
       type: Boolean,
