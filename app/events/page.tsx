@@ -5,6 +5,8 @@ import Image from "next/image";
 import { Calendar, MapPin, Clock, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useQuery } from "@tanstack/react-query";
+import React from "react";
 
 interface Event {
   _id: string;
@@ -16,42 +18,34 @@ interface Event {
   isUpcoming: boolean;
 }
 
+// API Fetcher with caching support
+async function fetchEvents(type: "upcoming" | "past") {
+  const res = await fetch(`/api/events/list?type=${type}`, { cache: "no-store" });
+  if (!res.ok) throw new Error("Failed to fetch events");
+  const data = await res.json();
+  if (!data.success) throw new Error("API returned an error");
+  return data.events as Event[];
+}
+
 export default function EventsPage() {
-  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
-  const [pastEvents, setPastEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const EVENTS_PER_PAGE = 3;
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const [upcomingRes, pastRes] = await Promise.all([
-          fetch("/api/events/list?type=upcoming"),
-          fetch("/api/events/list?type=past"),
-        ]);
+  // React Query data fetching & caching
+  const { data: upcomingEvents = [], isLoading: loadingUpcoming } = useQuery({
+    queryKey: ["events", "upcoming"],
+    queryFn: () => fetchEvents("upcoming"),
+    staleTime: 1000 * 60 * 5, // 5 mins
+  });
 
-        const upcomingData = await upcomingRes.json();
-        const pastData = await pastRes.json();
-
-        if (upcomingData.success) {
-          setUpcomingEvents(upcomingData.events);
-        }
-        if (pastData.success) {
-          setPastEvents(pastData.events);
-        }
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvents();
-  }, []);
+  const { data: pastEvents = [], isLoading: loadingPast } = useQuery({
+    queryKey: ["events", "past"],
+    queryFn: () => fetchEvents("past"),
+    staleTime: 1000 * 60 * 5,
+  });
 
   useEffect(() => {
     setCurrentPage(1);
@@ -87,8 +81,8 @@ export default function EventsPage() {
     }
   };
 
-  const displayEvents = activeTab === "upcoming" ? upcomingEvents : pastEvents;
-
+  const loading = loadingUpcoming || loadingPast;
+  const displayEvents = activeTab === "upcoming" ? (upcomingEvents ?? []) : (pastEvents ?? []);
   const totalPages = Math.ceil(displayEvents.length / EVENTS_PER_PAGE);
   const startIndex = (currentPage - 1) * EVENTS_PER_PAGE;
   const endIndex = startIndex + EVENTS_PER_PAGE;
@@ -109,10 +103,8 @@ export default function EventsPage() {
             src="/images/events.jpg"
             alt="Events background"
             fill
-            className="object-cover"
-            style={{ filter: "blur(2px)" }}
+            className="object-cover blur-sm"
             priority
-            unoptimized
           />
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-primary/40 via-primary-700/35 to-primary/40" />
@@ -212,7 +204,6 @@ export default function EventsPage() {
                           fill
                           className="object-cover transition-transform duration-500 group-hover:scale-110"
                           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          unoptimized
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                         {/* Date Badge */}
@@ -367,7 +358,6 @@ export default function EventsPage() {
                         fill
                         className="object-contain"
                         sizes="(max-width: 1536px) 100vw, 1280px"
-                        unoptimized
                       />
 
                       {/* Navigation Arrows */}
@@ -416,7 +406,6 @@ export default function EventsPage() {
                                 fill
                                 className="object-cover"
                                 sizes="112px"
-                                unoptimized
                               />
                             </button>
                           ))}

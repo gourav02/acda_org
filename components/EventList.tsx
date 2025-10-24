@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { Calendar, MapPin, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Event {
   _id: string;
@@ -16,64 +17,72 @@ interface Event {
   isUpcoming: boolean;
 }
 
+// API fetcher function
+const fetchEvents = async (): Promise<Event[]> => {
+  const res = await fetch("/api/events/list?type=all", { cache: "no-store" });
+  const data = await res.json();
+  if (!data.success) throw new Error("Failed to load events");
+  return data.events;
+};
+
+// API delete function
+const deleteEvent = async (id: string) => {
+  const res = await fetch(`/api/events/delete?id=${id}`, { method: "DELETE" });
+  const data = await res.json();
+  if (!data.success) throw new Error("Failed to delete event");
+  return id;
+};
+
 export default function EventList() {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [deleting, setDeleting] = useState<string | null>(null);
 
-  const fetchEvents = async () => {
-    try {
-      const response = await fetch("/api/events/list?type=all");
-      const data = await response.json();
-      if (data.success) {
-        setEvents(data.events);
-      }
-    } catch (error) {
-      console.error("Error fetching events:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // React Query - fetch + cache events
+  const {
+    data: events = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["events"],
+    queryFn: fetchEvents,
+    staleTime: 1000 * 60 * 10, // 10 minutes cache
+    retry: 2,
+  });
 
-  useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  const handleDelete = async (eventId: string) => {
-    if (!confirm("Are you sure you want to delete this event?")) {
-      return;
-    }
-
-    setDeleting(eventId);
-    try {
-      const response = await fetch(`/api/events/delete?id=${eventId}`, {
-        method: "DELETE",
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setEvents(events.filter((event) => event._id !== eventId));
-      } else {
-        alert("Failed to delete event");
-      }
-    } catch (error) {
-      console.error("Error deleting event:", error);
+  // ✅ Mutation for deleting events
+  const mutation = useMutation({
+    mutationFn: deleteEvent,
+    onMutate: (eventId) => {
+      setDeleting(eventId);
+    },
+    onSuccess: (deletedId) => {
+      queryClient.setQueryData<Event[]>(["events"], (old = []) =>
+        old.filter((e) => e._id !== deletedId)
+      );
+    },
+    onError: () => {
       alert("Failed to delete event");
-    } finally {
+    },
+    onSettled: () => {
       setDeleting(null);
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+    },
+  });
+
+  const handleDelete = (eventId: string) => {
+    if (confirm("Are you sure you want to delete this event?")) {
+      mutation.mutate(eventId);
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+  const formatDate = (dateString: string) =>
+    new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-  };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -81,12 +90,16 @@ export default function EventList() {
     );
   }
 
-  if (events.length === 0) {
+  if (isError || events.length === 0) {
     return (
       <div className="rounded-2xl bg-white p-8 text-center shadow-lg">
         <Calendar className="mx-auto h-16 w-16 text-gray-300" />
-        <h3 className="mt-4 text-xl font-semibold text-gray-700">No events yet</h3>
-        <p className="mt-2 text-gray-500">Create your first event using the form above</p>
+        <h3 className="mt-4 text-xl font-semibold text-gray-700">
+          {isError ? "Error loading events" : "No events yet"}
+        </h3>
+        <p className="mt-2 text-gray-500">
+          {isError ? "Please try again later" : "Create your first event using the form above"}
+        </p>
       </div>
     );
   }
@@ -107,7 +120,8 @@ export default function EventList() {
                   alt={event.title}
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  unoptimized
+                  sizes="(max-width:768px) 100vw, 50vw"
+                  loading="lazy"
                 />
               </div>
             )}

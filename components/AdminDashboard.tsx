@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Session } from "next-auth";
 import PhotoUploadForm from "@/components/PhotoUploadForm";
 import EventForm from "@/components/EventForm";
+import EventList from "./EventList";
 
 interface AdminDashboardProps {
   session: Session;
@@ -91,9 +92,9 @@ export default function AdminDashboard({ session }: AdminDashboardProps) {
             </div>
 
             {/* Event List */}
-            {/* <div className="mb-8">
+            <div className="mb-8">
               <EventList />
-            </div> */}
+            </div>
           </>
         )}
       </main>

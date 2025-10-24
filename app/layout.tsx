@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import AnnouncementBar from "@/components/AnnouncementBar";
 import { Toaster } from "@/components/ui/toaster";
 import SessionProvider from "@/components/SessionProvider";
+import ReactQueryProvider from "./providers/react-query-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -40,7 +41,10 @@ export default function RootLayout({
             />
             <Header />
             <link rel="icon" href="/logos/logo.jpg" />
-            <main className="flex-1">{children}</main>
+            <ReactQueryProvider>
+              {" "}
+              <main className="flex-1">{children}</main>
+            </ReactQueryProvider>
             <Footer />
           </div>
           <Toaster />

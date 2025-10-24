@@ -299,7 +299,7 @@ export default function PhotoUploadForm() {
                   width={200}
                   height={150}
                   className="h-32 w-full rounded-lg object-cover"
-                  unoptimized
+                  loading="lazy"
                 />
                 <button
                   type="button"

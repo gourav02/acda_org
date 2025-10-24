@@ -351,7 +351,6 @@ export default function EventForm() {
                     width={200}
                     height={150}
                     className="h-32 w-full rounded-lg object-cover"
-                    unoptimized
                   />
                   <button
                     type="button"

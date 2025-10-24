@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import { Calendar, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import {
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { YEARS } from "@/lib/constants";
+import { useQuery } from "@tanstack/react-query";
 
 interface EventPhoto {
   _id: string;
@@ -42,6 +43,14 @@ interface Event {
 
 const IMAGES_PER_PAGE = 6;
 
+// API fetcher
+const fetchPhotos = async (year: number) => {
+  const res = await fetch(`/api/events/photos?year=${year}`, { cache: "no-store" });
+  if (!res.ok) throw new Error("Failed to fetch photos");
+  const data = await res.json();
+  return data.photos as EventPhoto[];
+};
+
 export default function EventGallery() {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState<number>(currentYear);
@@ -51,42 +60,24 @@ export default function EventGallery() {
     index: number;
   } | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [photos, setPhotos] = useState<EventPhoto[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
 
-  // Handle image load errors
+  // React Query: Fetch + Cache photos by year
+  const {
+    data: photos = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["photos", selectedYear],
+    queryFn: () => fetchPhotos(selectedYear),
+    staleTime: 1000 * 60 * 10, // 10 minutes
+    retry: 2,
+  });
+
   const handleImageError = (url: string) => {
     setImageErrors((prev) => new Set(prev).add(url));
   };
 
-  // Fetch photos from API
-  useEffect(() => {
-    const fetchPhotos = async () => {
-      setIsLoading(true);
-      setError(null);
-      setImageErrors(new Set());
-      try {
-        const response = await fetch(`/api/events/photos?year=${selectedYear}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch photos");
-        }
-        const data = await response.json();
-        setPhotos(data.photos || []);
-      } catch (err) {
-        console.error("Error fetching photos:", err);
-        setError("Failed to load photos. Please try again later.");
-        setPhotos([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchPhotos();
-  }, [selectedYear]);
-
-  // Group photos by event name
   const groupedEvents = useMemo(() => {
     const groups = photos.reduce(
       (acc, photo) => {
@@ -107,7 +98,6 @@ export default function EventGallery() {
     return Object.values(groups);
   }, [photos]);
 
-  // Flatten all images from grouped events
   const allImages = useMemo(() => {
     return groupedEvents.flatMap((event) =>
       event.images.map((image, index) => ({
@@ -118,11 +108,9 @@ export default function EventGallery() {
     );
   }, [groupedEvents]);
 
-  // Pagination logic
   const totalPages = Math.ceil(allImages.length / IMAGES_PER_PAGE);
   const startIndex = (currentPage - 1) * IMAGES_PER_PAGE;
-  const endIndex = startIndex + IMAGES_PER_PAGE;
-  const displayedImages = allImages.slice(startIndex, endIndex);
+  const displayedImages = allImages.slice(startIndex, startIndex + IMAGES_PER_PAGE);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -138,17 +126,10 @@ export default function EventGallery() {
     <section className="bg-white">
       {/* Hero Section */}
       <div className="relative h-[500px] overflow-hidden bg-gradient-to-br from-blue-900 via-indigo-800 to-blue-900 sm:h-[600px]">
-        {/* Blurred Background Image */}
         <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url('/images/con.JPG')`,
-            filter: "blur(1px)",
-            transform: "scale(1.02)",
-          }}
+          className="absolute inset-0 scale-[1.02] bg-cover bg-center blur-[1px]"
+          style={{ backgroundImage: `url('/images/con.JPG')` }}
         />
-
-        {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/40" />
 
         {/* Decorative Pattern */}
@@ -161,7 +142,6 @@ export default function EventGallery() {
           />
         </div>
 
-        {/* Hero Content */}
         <div className="relative z-10 flex h-full items-center">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl">
@@ -174,8 +154,6 @@ export default function EventGallery() {
                   care and education.
                 </i>
               </p>
-
-              {/* Stats */}
               <div className="mt-8 flex flex-wrap gap-6">
                 <div className="rounded-lg bg-white/10 px-6 py-3 backdrop-blur-sm">
                   <div className="text-2xl font-bold text-white">{photos.length}</div>
@@ -198,7 +176,7 @@ export default function EventGallery() {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          {/* Year Selector Section */}
+          {/* Filter */}
           <div className="mb-12 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <div>
               <h2 className="text-2xl font-bold text-gray-900">Event Photos</h2>
@@ -210,7 +188,7 @@ export default function EventGallery() {
             <div className="w-full sm:w-auto">
               <label className="mb-2 block text-sm font-medium text-gray-700">Filter by Year</label>
               <Select value={selectedYear.toString()} onValueChange={handleYearChange}>
-                <SelectTrigger className="w-full border-gray-300 bg-white shadow-sm hover:border-primary-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500 sm:w-[200px]">
+                <SelectTrigger className="w-full border-gray-300 bg-white shadow-sm sm:w-[200px]">
                   <Calendar className="mr-2 h-5 w-5 text-primary-600" />
                   <SelectValue placeholder="Select year" />
                 </SelectTrigger>
@@ -225,24 +203,20 @@ export default function EventGallery() {
             </div>
           </div>
 
-          {/* Loading State */}
+          {/* States */}
           {isLoading ? (
-            <div className="flex min-h-[500px] items-center justify-center rounded-lg bg-gray-50">
-              <div className="text-center">
-                <Loader2 className="mx-auto mb-4 h-12 w-12 animate-spin text-primary-600" />
-                <p className="text-base font-medium text-gray-600">Loading photos...</p>
-              </div>
+            <div className="flex min-h-[400px] items-center justify-center">
+              <Loader2 className="h-12 w-12 animate-spin text-primary-600" />
             </div>
-          ) : error ? (
+          ) : isError ? (
             <div className="rounded-lg bg-red-50 py-20 text-center">
-              <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-red-100">
-                <Calendar className="h-10 w-10 text-red-500" />
-              </div>
-              <h3 className="mb-2 text-xl font-semibold text-gray-900">Error Loading Photos</h3>
-              <p className="text-gray-600">{error}</p>
+              <Calendar className="mx-auto mb-4 h-10 w-10 text-red-500" />
+              <h3 className="text-xl font-semibold text-gray-900">Error Loading Photos</h3>
+              <p className="text-gray-600">Failed to load photos. Please try again later.</p>
             </div>
           ) : displayedImages.length > 0 ? (
             <>
+              {/* Grid */}
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {displayedImages.map((item, idx) => (
                   <div
@@ -250,35 +224,25 @@ export default function EventGallery() {
                     className="group relative cursor-pointer overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-2xl"
                     onClick={() => setSelectedImage(item)}
                   >
-                    {/* Image Container */}
                     <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
                       {imageErrors.has(item.url) ? (
                         <div className="flex h-full w-full items-center justify-center">
-                          <div className="text-center">
-                            <Calendar className="mx-auto h-12 w-12 text-gray-300" />
-                            <p className="mt-3 text-sm text-gray-500">Image unavailable</p>
-                          </div>
+                          <p className="text-sm text-gray-500">Image unavailable</p>
                         </div>
                       ) : (
-                        <>
-                          <Image
-                            src={item.url}
-                            alt={item.event.title}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                            loading="lazy"
-                            unoptimized
-                            onError={() => handleImageError(item.url)}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                        </>
+                        <Image
+                          src={item.url}
+                          alt={item.event.title}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 33vw"
+                          loading="lazy"
+                          onError={() => handleImageError(item.url)}
+                        />
                       )}
                     </div>
-
-                    {/* Event Info */}
                     <div className="p-4">
-                      <h3 className="mb-1 line-clamp-2 text-base font-semibold text-gray-900 transition-colors group-hover:text-primary-700">
+                      <h3 className="line-clamp-2 text-base font-semibold text-gray-900">
                         {item.event.title}
                       </h3>
                       <p className="flex items-center text-sm text-gray-500">
@@ -292,67 +256,54 @@ export default function EventGallery() {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="mt-12 flex items-center justify-center">
-                  <nav className="flex items-center gap-2">
-                    <Button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      variant="outline"
-                      size="sm"
-                      className="border-gray-300 text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                      Previous
-                    </Button>
+                <div className="mt-12 flex justify-center gap-2">
+                  <Button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    variant="outline"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                  >
+                    <ChevronLeft className="h-4 w-4" /> Prev
+                  </Button>
 
-                    <div className="flex gap-1">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <Button
-                          key={page}
-                          onClick={() => handlePageChange(page)}
-                          variant={currentPage === page ? "default" : "outline"}
-                          size="sm"
-                          className={
-                            currentPage === page
-                              ? "bg-primary-600 text-white hover:bg-primary-700"
-                              : "border-gray-300 text-gray-700 hover:bg-gray-50"
-                          }
-                        >
-                          {page}
-                        </Button>
-                      ))}
-                    </div>
-
+                  {Array.from({ length: totalPages }).map((_, i) => (
                     <Button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      variant="outline"
-                      size="sm"
-                      className="border-gray-300 text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                      key={i}
+                      onClick={() => handlePageChange(i + 1)}
+                      variant={currentPage === i + 1 ? "default" : "outline"}
+                      className={
+                        currentPage === i + 1
+                          ? "bg-primary-600 text-white hover:bg-primary-700"
+                          : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                      }
                     >
-                      Next
-                      <ChevronRight className="h-4 w-4" />
+                      {i + 1}
                     </Button>
-                  </nav>
+                  ))}
+
+                  <Button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    variant="outline"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                  >
+                    Next <ChevronRight className="h-4 w-4" />
+                  </Button>
                 </div>
               )}
             </>
           ) : (
-            // No images message
             <div className="rounded-lg bg-gray-50 py-20 text-center">
-              <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gray-200">
-                <Calendar className="h-10 w-10 text-gray-400" />
-              </div>
-              <h3 className="mb-2 text-xl font-semibold text-gray-900">
+              <h3 className="text-xl font-semibold text-gray-900">
                 No events found for {selectedYear}
               </h3>
-              <p className="text-gray-600">Please select a different year to view event photos.</p>
+              <p className="text-gray-600">Please select another year.</p>
             </div>
           )}
         </div>
       </div>
 
-      {/* Lightbox Dialog */}
+      {/* Lightbox */}
       <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
         <DialogContent className="max-w-5xl">
           <DialogHeader>
@@ -360,35 +311,22 @@ export default function EventGallery() {
               {selectedImage?.event.title}
             </DialogTitle>
             <DialogDescription className="flex items-center text-base text-gray-600">
-              {selectedImage?.event.description}
-              <span className="mx-2">•</span>
-              <span className="flex items-center">
-                <Calendar className="mr-1.5 h-4 w-4" />
-                {selectedImage?.event.year}
-              </span>
+              {selectedImage?.event.description} • {selectedImage?.event.year}
             </DialogDescription>
           </DialogHeader>
+
           {selectedImage && (
             <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg bg-gray-100">
               {imageErrors.has(selectedImage.url) ? (
-                <div className="flex h-full w-full items-center justify-center">
-                  <div className="text-center">
-                    <Calendar className="mx-auto h-16 w-16 text-gray-300" />
-                    <p className="mt-4 text-base font-medium text-gray-700">
-                      Image temporarily unavailable
-                    </p>
-                    <p className="mt-1 text-sm text-gray-500">Please try refreshing the page</p>
-                  </div>
-                </div>
+                <p className="mt-8 text-center text-gray-500">Image temporarily unavailable</p>
               ) : (
                 <Image
                   src={selectedImage.url}
                   alt={selectedImage.event.title}
                   fill
                   className="object-contain"
-                  sizes="(max-width: 1024px) 100vw, 1024px"
+                  sizes="(max-width:1024px) 100vw, 1024px"
                   priority
-                  unoptimized
                   onError={() => handleImageError(selectedImage.url)}
                 />
               )}
