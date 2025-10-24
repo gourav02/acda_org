@@ -255,12 +255,15 @@ export default function EventsPage() {
                           <Clock className="h-4 w-4 flex-shrink-0 text-primary" />
                           <span>{formatTime(event.date)}</span>
                         </div>
-                        {event.location && (
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <MapPin className="h-4 w-4 flex-shrink-0 text-primary" />
-                            <span className="line-clamp-1">{event.location}</span>
-                          </div>
-                        )}
+                        <a
+                          href={event.location}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="line-clamp-1 flex items-center justify-center gap-2 text-primary hover:underline"
+                        >
+                          <MapPin className="h-4 w-4 flex-shrink-0 text-primary" />
+                          <span className="line-clamp-1">{event.location}</span>
+                        </a>
                       </div>
 
                       {/* Status Badge */}
@@ -452,9 +455,16 @@ export default function EventsPage() {
                         <MapPin className="h-4 w-4" />
                         Location
                       </h4>
-                      <p className="text-base font-medium text-gray-800">
-                        {selectedEvent.location}
-                      </p>
+                      <a
+                        href={selectedEvent.location}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="line-clamp-1 text-primary hover:underline"
+                      >
+                        <p className="text-base font-medium text-gray-800">
+                          {selectedEvent.location}
+                        </p>
+                      </a>
                     </div>
                   )}
                 </div>

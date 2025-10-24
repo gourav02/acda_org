@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar } from "lucide-react";
+import { Calendar, Download, FileText } from "lucide-react";
 import Image from "next/image";
 
 export default function AcdaconSection() {
@@ -25,6 +25,48 @@ export default function AcdaconSection() {
           <h2 className="mb-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
             ACDACon – Annual Conference
           </h2>
+        </div>
+
+        {/* ACDACON 2025 Announcement Card */}
+        <div className="mb-12 lg:mb-16">
+          <div className="mx-auto max-w-7xl overflow-hidden rounded-2xl border border-primary-200 bg-gradient-to-br from-primary-50 to-white shadow-lg">
+            <div className="flex flex-col gap-6 p-8 md:flex-row md:items-center md:justify-between lg:p-10">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 rounded-xl bg-primary-100 p-3">
+                  <FileText className="h-8 w-8 text-primary-600" />
+                </div>
+                <div>
+                  <h3 className="mb-2 text-2xl font-bold text-gray-900">
+                    ACDACON 2025 - 5th Annual Conference
+                  </h3>
+                  <p className="mb-1 text-base font-medium text-gray-800">
+                    📅 25th & 26th October 2025 | 📍 Garh Panchakot, Eco Tourism, Purulia, West
+                    Bengal
+                  </p>
+                  <p className="text-base text-gray-700">
+                    Download the complete program with session details, speakers, and schedule.
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <a
+                  href="/events"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-primary bg-white px-6 py-3 text-base font-semibold text-primary shadow-md transition-all hover:bg-primary-50"
+                >
+                  More Details
+                </a>
+                <a
+                  href="/documents/acdacon-2025-scientific-program.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-base font-semibold text-white shadow-md transition-all hover:bg-primary/90 hover:shadow-lg"
+                >
+                  <Download className="h-5 w-5" />
+                  Download Program
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Text and Image Section */}
