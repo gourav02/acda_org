@@ -111,9 +111,20 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-8 border-t border-primary-800 pt-8">
+        <div className="mt-8 flex flex-col gap-4 border-t border-primary-800 pt-8">
           <p className="text-center text-sm text-gray-300">
             &copy; {currentYear} Asansol Coalfield Diabetes Association. All rights reserved.
+          </p>
+          <p className="text-center text-xs text-gray-400">
+            Designed & Developed by{" "}
+            <a
+              href="https://gourav-portfolio-ten.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-white underline transition-colors hover:text-primary-300"
+            >
+              Gourav Mukherjee
+            </a>
           </p>
         </div>
       </div>
