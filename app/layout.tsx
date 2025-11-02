@@ -23,6 +23,9 @@ export const metadata: Metadata = {
   title: "ACDA",
   description:
     "Together, we envision a healthier tomorrow — where awareness, prevention, and early intervention shape the future of diabetes care.",
+  icons: {
+    icon: "/logos/logo.jpg",
+  },
 };
 
 export default function RootLayout({
@@ -37,7 +40,6 @@ export default function RootLayout({
           <div className="flex min-h-screen flex-col">
             <DynamicAnnouncementBar />
             <Header />
-            <link rel="icon" href="/logos/logo.jpg" />
             <ReactQueryProvider>
               {" "}
               <main className="flex-1">{children}</main>
