@@ -1,7 +1,29 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ArrowRight, Users } from "lucide-react";
 
 export default function ContactUs() {
+  const [imageUrl, setImageUrl] = useState("/images/membership.JPG");
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const response = await fetch("/api/home-content/get");
+        if (response.ok) {
+          const data = await response.json();
+          setImageUrl(data.content.membershipImageUrl);
+        }
+      } catch (error) {
+        console.error("Error fetching membership image:", error);
+        // Use default image on error
+      }
+    };
+
+    fetchContent();
+  }, []);
+
   return (
     <section className="relative overflow-hidden bg-white py-16 lg:py-24">
       {/* Content */}
@@ -23,12 +45,13 @@ export default function ContactUs() {
           <div className="mb-12 overflow-hidden rounded-2xl shadow-xl">
             <div className="relative h-96 w-full sm:h-[500px] lg:h-[600px]">
               <Image
-                src="/images/membership.JPG"
+                src={imageUrl}
                 alt="Membership background"
                 fill
                 className="object-cover"
                 quality={90}
                 priority={false}
+                key={imageUrl}
               />
               <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-blue-500/10 to-indigo-600/20" />
             </div>

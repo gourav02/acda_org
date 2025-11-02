@@ -8,13 +8,15 @@ import { Session } from "next-auth";
 import PhotoUploadForm from "@/components/PhotoUploadForm";
 import EventForm from "@/components/EventForm";
 import EventList from "./EventList";
+import VideoUploadForm from "@/components/VideoUploadForm";
+import HomeContentManager from "@/components/HomeContentManager";
 
 interface AdminDashboardProps {
   session: Session;
 }
 
 export default function AdminDashboard({ session }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<"photos" | "events">("photos");
+  const [activeTab, setActiveTab] = useState<"photos" | "events" | "video" | "home">("photos");
 
   const handleSignOut = async () => {
     await signOut({
@@ -74,6 +76,26 @@ export default function AdminDashboard({ session }: AdminDashboardProps) {
           >
             Events Management
           </button>
+          <button
+            onClick={() => setActiveTab("video")}
+            className={`pb-4 text-lg font-semibold transition-colors ${
+              activeTab === "video"
+                ? "border-b-2 border-primary text-primary"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Hero Video
+          </button>
+          <button
+            onClick={() => setActiveTab("home")}
+            className={`pb-4 text-lg font-semibold transition-colors ${
+              activeTab === "home"
+                ? "border-b-2 border-primary text-primary"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Home Content
+          </button>
         </div>
 
         {/* Tab Content */}
@@ -84,7 +106,7 @@ export default function AdminDashboard({ session }: AdminDashboardProps) {
               <PhotoUploadForm />
             </div>
           </>
-        ) : (
+        ) : activeTab === "events" ? (
           <>
             {/* Event Form */}
             <div className="mb-8">
@@ -94,6 +116,20 @@ export default function AdminDashboard({ session }: AdminDashboardProps) {
             {/* Event List */}
             <div className="mb-8">
               <EventList />
+            </div>
+          </>
+        ) : activeTab === "video" ? (
+          <>
+            {/* Video Upload Form */}
+            <div className="my-24">
+              <VideoUploadForm />
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Home Content Manager */}
+            <div className="my-24">
+              <HomeContentManager />
             </div>
           </>
         )}

@@ -1,9 +1,29 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Calendar, Download, FileText } from "lucide-react";
 import Image from "next/image";
 
 export default function AcdaconSection() {
+  const [imageUrl, setImageUrl] = useState("/images/acdacon.jpeg");
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const response = await fetch("/api/home-content/get");
+        if (response.ok) {
+          const data = await response.json();
+          setImageUrl(data.content.acdaconImageUrl);
+        }
+      } catch (error) {
+        console.error("Error fetching acdacon image:", error);
+        // Use default image on error
+      }
+    };
+
+    fetchContent();
+  }, []);
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-16 lg:py-24">
       {/* Background Pattern */}
@@ -95,11 +115,12 @@ export default function AcdaconSection() {
           <div className="w-full flex-shrink-0 lg:w-1/2">
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-xl">
               <Image
-                src="/images/acdacon.jpeg"
+                src={imageUrl}
                 alt="ACDACon - Annual Diabetes Conference"
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
+                key={imageUrl}
               />
             </div>
           </div>

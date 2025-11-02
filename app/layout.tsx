@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import AnnouncementBar from "@/components/AnnouncementBar";
+import DynamicAnnouncementBar from "@/components/DynamicAnnouncementBar";
 import { Toaster } from "@/components/ui/toaster";
 import SessionProvider from "@/components/SessionProvider";
 import ReactQueryProvider from "./providers/react-query-provider";
@@ -35,10 +35,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <SessionProvider>
           <div className="flex min-h-screen flex-col">
-            <AnnouncementBar
-              message="Annual ACDA conference on 25th and 26th October 2025."
-              priority="info"
-            />
+            <DynamicAnnouncementBar />
             <Header />
             <link rel="icon" href="/logos/logo.jpg" />
             <ReactQueryProvider>
