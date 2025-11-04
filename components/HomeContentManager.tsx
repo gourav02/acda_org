@@ -70,7 +70,13 @@ export default function HomeContentManager() {
   const fetchContent = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("/api/home-content/get");
+      // Add cache-busting query parameter to prevent caching
+      const response = await fetch(`/api/home-content/get?t=${Date.now()}`, {
+        cache: "no-store",
+        headers: {
+          "Cache-Control": "no-cache",
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();

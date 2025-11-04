@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import HomeContent from "@/models/HomeContent";
+import { revalidatePath } from "next/cache";
 
 /**
  * POST /api/home-content/update
@@ -46,6 +47,10 @@ export async function POST(request: NextRequest) {
       }
       await homeContent.save();
     }
+
+    // Revalidate the homepage and API route to clear cache
+    revalidatePath("/");
+    revalidatePath("/api/home-content/get");
 
     return NextResponse.json(
       {

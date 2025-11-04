@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import HomeContent from "@/models/HomeContent";
 
+// Disable caching for this route
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 /**
  * GET /api/home-content/get
  * Fetch home page content (announcement and images)
@@ -39,7 +43,14 @@ export async function GET() {
           membershipImageUrl: homeContent.membershipImageUrl,
         },
       },
-      { status: 200 }
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      }
     );
   } catch (error) {
     console.error("Error fetching home content:", error);
